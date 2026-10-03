@@ -6,7 +6,7 @@ Prepare a Git repository preserving the uploaded portfolio design brief. Website
 
 ## Proposed implementation scope
 
-Build the Home/front page first, then review its typography, sidebar, column hierarchy, and interaction before expanding to Work, About, and Contact. Follow [the current plan](portfolio-v2.md); Archive and Field Notes are not launch modules.
+Build the Index/front-page profile first, then review its typography, sidebar, column hierarchy, and interaction before expanding to Work, About, and Contact. Follow [the current plan](portfolio-v2.md); Archive is folded into Work, Field Notes appears when genuine writing is ready, and a coding crossword belongs on the optional Back Page.
 
 ## Design direction from the attachment
 
