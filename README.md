@@ -19,4 +19,4 @@ This repository is connected to GitHub. Select it in a Codex cloud environment a
 
 Suggested next task:
 
-> Read docs/portfolio-v2.md and docs/NEXT-STEPS.md. Build the Index/front-page profile for Kershey’s newspaper portfolio first, then Work, About, and Contact. Add Field Notes when real writing is ready and a Back Page coding crossword as an optional feature. Use truthful project details and original assets.
+> Read docs/portfolio-v2.md and docs/NEXT-STEPS.md. Build the Index/front-page profile first, then Work case studies, About, Archive with GitHub activity, and Contact. Add Field Notes when real writing is ready and a Back Page code word search as an optional feature. Use truthful project details and original assets.
