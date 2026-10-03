@@ -15,10 +15,11 @@ Keep the approved art direction: fixed contents rail, **THE BUILD JOURNAL** mast
 | 01 Index | `/` | Present a short front-page news profile about Kershey, his ideas, and what he makes. | Open Work or About. |
 | 02 Work | `/work` | Show selected projects in one ordered view, then link to full case studies. | Judge one project in detail. |
 | 03 About | `/about` | Give professional background, practical capabilities, tools, and a resume. | Assess fit and interests. |
-| 04 Field Notes | `/notes` | Publish Kershey's real thoughts and experiments as short columns. | Read a genuine note. |
-| 05 Contact | `/contact` | Offer direct, working ways to get in touch. | Send an inquiry. |
+| 04 Archive | `/archive` | Offer a complete, compact project index, then real GitHub activity and public repositories. | Scan everything Kershey has made. |
+| 05 Field Notes | `/notes` | Publish Kershey's real thoughts and experiments as short columns. | Read a genuine note. |
+| 06 Contact | `/contact` | Offer direct, working ways to get in touch. | Send an inquiry. |
 
-Each project story lives under `/work/[slug]` and is reached from Work. The Work page already serves the project-index function, so **Archive is removed**. Field Notes is part of the intended publication, but show it in the live navigation only when at least one real piece is ready; do not show an empty section or invented dated posts. A small **Back Page / Mini Crossword** link sits below the main contents list at `/puzzle`; the game is an optional extra, not a required step toward Work or Contact. The sidebar directory can show GitHub now; add LinkedIn, Resume, and Email when their public destinations are confirmed. Sound stays off by default.
+Each project story lives under `/work/[slug]` and is reached from Work. **Work and Archive have different jobs:** Work is a curated set of substantial editorial case studies; Archive is a compact index of all projects, including those without full stories, followed by GitHub activity. The same project may appear as a feature and as one row in the index, but the Archive does not repeat case-study text. Field Notes is part of the intended publication, but show it in the live navigation only when at least one real piece is ready; do not show an empty section or invented dated posts. A small **Back Page / Code Word Search** link sits below the main contents list at `/puzzle`; the game is an optional extra, not a required step toward Work or Contact. The sidebar directory can show GitHub now; add LinkedIn, Resume, and Email when their public destinations are confirmed. Sound stays off by default.
 
 The primary route for a busy visitor is **Index → Work → case study → Contact**. About is one step away from every page. Every page has a direct URL, visible title, and route back to Work. Mobile uses the same destinations in an accessible Contents menu and a normal single-column reading flow.
 
@@ -80,13 +81,23 @@ Three useful content blocks:
 
 Only use a real statement from Kershey as a pull quote. No fabricated interview, years of experience, awards, clients, or skill percentages.
 
-## 04 Field Notes / columns
+## 04 Archive / project index and GitHub
+
+**Question answered:** What else has Kershey made, and what public work can I inspect?
+
+The top of Archive is a typographic project directory, closer to a newspaper index than a grid of cards. Include every approved portfolio project with a concise name, category, one factual sentence, year/status if verified, and a direct link to a case study, live project, or repository where one exists. The initial list can include XillaFit, School Voting System, Nodra, and Sodales Talents after their identities and public-use permissions are confirmed. Work gives selected projects editorial space; Archive lets a visitor scan the complete list quickly. Avoid copying the Work lead image or article text here.
+
+The **last part of Archive** is titled `On GitHub`. Put Kershey's genuine contribution calendar first, with a clear time range, day-by-day blocks, accessible color legend, and a link to his GitHub profile. Put `Public Repositories` directly below it as a compact list: repository name, primary language and last update if available, plus a real GitHub link. Public repositories currently visible on `kershey-dev` are `SentenceSmarat`, `racipay`, `xillafit-flutter`, `FBA`, `mapty`, `kershey-dev`, and `kershey-portfolio`. Exclude the profile (`kershey-dev`) and this portfolio repo from the *project* list unless Kershey chooses to show them. Do not claim a similarly named repo is the code for a private portfolio project without confirmation.
+
+This can be connected to live GitHub data. Public repo metadata comes from GitHub's public REST repository endpoint, filtered and cached server-side or at build time. The contribution calendar can come from GitHub GraphQL with a server-side token, or from a cached rendering of GitHub's public contributions page; do not place a token in browser code. The public contributions page and public repo endpoint both returned data during planning. If the feed fails, show a clear GitHub profile link rather than blank or fabricated blocks. Avoid treating contribution counts as a measure of professional skill.
+
+## 05 Field Notes / columns
 
 **Question answered:** How does Kershey think through a real interface or development problem?
 
 Publish short first-person pieces only when Kershey has approved their factual content. Strong initial subjects are a specific interaction he built, a design decision from a project, or why this portfolio uses newspaper structure. A note needs a real title, date, useful body, and relevant image only if one exists. The page can use two or three columns on wide screens and one on phones. Its purpose is to reveal thinking; it must not repeat case studies or invent a diary.
 
-## 05 Contact / notice
+## 06 Contact / notice
 
 **Question answered:** How do I reach Kershey now?
 
@@ -94,21 +105,21 @@ Headline: `Have something worth building?` Supporting line: `For a project, coll
 
 ## Newspaper system and interaction
 
-- The fixed desktop rail is the contents column; the right side is the newspaper page. Use page numbers `01–05` when Notes is published, thin rules, editorial headlines, captioning, and a restrained red active marker. The masthead follows the approved front-page mockup: **THE BUILD JOURNAL**.
+- The fixed desktop rail is the contents column; the right side is the newspaper page. Use page numbers `01–06` when Notes is published, thin rules, editorial headlines, captioning, and a restrained red active marker. The masthead follows the approved front-page mockup: **THE BUILD JOURNAL**.
 - Use clean off-white `#F7F5EF`, ink `#171716`, oxblood `#86262A`; Newsreader for editorial type, IBM Plex Sans for UI, IBM Plex Mono for small labels. Test line lengths and 16–18px body text on phones.
 - Treat type and photos like a broadsheet rather than a poster: a moderately sized masthead, a lead headline across two or three columns, and a portrait occupying one narrower column. Use actual article paragraphs, small side stories, captions, and logical rules. Avoid the oversized headline and image proportions in the last four-panel concept board.
-- Index has one real portrait and a reported-profile feel; Work has real screenshots and article hierarchy; About holds qualifications and process; Notes holds real writing; Contact is a simple notice. Shared visual language does not mean repeating copy or composition.
+- Index has one real portrait and a reported-profile feel; Work has real screenshots and article hierarchy; About holds qualifications and process; Archive is an index plus GitHub evidence; Notes holds real writing; Contact is a simple notice. Shared visual language does not mean repeating copy or composition.
 - Motion is a brief page reveal, small active-rule slide, and restrained hover/focus feedback. Standard scrolling, direct links, back/forward, keyboard navigation, touch use, visible focus, and reduced-motion support are required. Sound is opt-in and never needed to understand the site.
 - Approved image mockups are visual studies. Generated copy or project imagery must not be published as facts or passed off as real screenshots.
 
-## Back Page / Mini Crossword
+## Back Page / Code Word Search
 
-Offer a small newspaper-style crossword about web development, separate from the professional reading path. Possible answer vocabulary includes `HTML`, `CSS`, `CODE`, `LINK`, `GRID`, `BUG`, `API`, `PIXEL`, and `BROWSER`; choose a valid grid and clues rather than forcing all words into one puzzle. Clues should be understandable to a curious visitor, not only an expert. Do not label it daily or weekly unless puzzles will actually be maintained on that schedule.
+This is a **word search, not a crossword**. Make a printed-looking grid densely filled with letters. Hide web and coding terms such as `HTML`, `CSS`, `JAVASCRIPT`, `REACT`, `API`, `GRID`, `PIXEL`, `CODE`, and `LINK` horizontally, vertically, and diagonally. A visitor finds a word by dragging across letters on pointer or touch, leaving a thin red line or shaded ink-red cells; found words are crossed off in a nearby word list. The actual puzzle must use a generated or hand-verified valid grid in which every listed word appears. Do not show empty crossword boxes or across/down clues.
 
-The puzzle works with keyboard, touch, and screen readers; it has clear across/down clues, selected-cell state, visible focus, check/reveal controls, and locally saved progress. Finishing gets a restrained ink-red completion flourish or a small `Y.` easter egg. No account, timer, leaderboard, scroll trapping, or mandatory play. The puzzle can itself become a Work case study after it is built, showing its interaction and accessibility decisions.
+The puzzle works with keyboard, touch, and screen readers; keyboard visitors can choose a start and end cell as an alternative to dragging. Keep visible focus, a readable word list, a hint/reveal control, and locally saved progress. Finishing gets a restrained ink-red completion flourish or a small `Y.` easter egg. No account, timer, leaderboard, scroll trapping, or mandatory play. The game can itself become a Work case study after it is built, showing its interaction and accessibility decisions.
 
 ## Sources and build order
 
 Kershey's brief establishes his name, preferred roles, four project names, visual direction, and portrait choice. His public GitHub profile currently states `Web Developer · Builder · BSIT Student`, Philippines, Web Development/UI/UX/Automation focus, and a toolbox; it also describes XillaFit. These are draft content sources, not verified outcomes. Exact role, metrics, dates, public contact address, LinkedIn, resume, and project media still need Kershey's confirmation. Do not publish private-repository details or assume similarly named repos match portfolio projects.
 
-Build the responsive shell and Index with the original studio portrait; then Work and the strongest verified case study; then About and Contact with confirmed destinations. Add Field Notes when one real article is approved, and the Back Page crossword as a small independent feature. Add subtle motion and optional sound after the static reading experience works well on desktop and phone.
+Build the responsive shell and Index with the original studio portrait; then Work and the strongest verified case study; then About and Contact with confirmed destinations. Add Archive with the complete project list and cached GitHub data. Add Field Notes when one real article is approved, and the Back Page word search as a small independent feature. Add subtle motion and optional sound after the static reading experience works well on desktop and phone.
