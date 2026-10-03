@@ -16,7 +16,7 @@ Use a licensed blackletter typeface with a similar weight and rhythm for the mas
 
 - Desktop has a fixed left contents column and a newspaper page on the right. The paper has a fine outside border and a restrained off-white surface; ink is near black and the only accent is deep red.
 - Each section shares the same masthead, folio position, rules, margins, caption style, and contents navigation. Its article composition can change to suit the subject. A section should still look like a page from the same paper when motion is disabled.
-- The reading rhythm is one clear lead, then one or two quieter supporting pieces. Paragraph columns are narrow enough to read; rules separate stories rather than framing every item as a card. Leave breathing room around groups, without large unused areas that make the paper look empty.
+- The reading rhythm is one clear lead, then one or two quieter supporting pieces. Paragraph columns are narrow enough to read; rules separate stories rather than framing every item as a card. The visible paper should feel occupied from masthead through the lower briefs, like Kershey's supplied front-page reference. Use compact article spacing and meaningful side stories to balance the sheet, while retaining enough space to scan. Do not stretch a short section to viewport height and leave a large blank lower half; let a shorter newspaper page end naturally instead of inventing filler.
 - The masthead is the one notably large typographic element. As initial browser targets, keep it roughly 52–64px on a 1440px desktop and 32–40px on a 390px phone. The lead headline may reach roughly 44–52px on desktop, while section headlines stay closer to 28–36px. Body copy is roughly 15–17px on desktop and at least 16px on phones. Tune these against the actual font and copy, not the numbers alone.
 - Use the first real studio portrait Kershey supplied, with glasses and a red top, as the front-page image. Keep its likeness authentic. A restrained grayscale or newsprint treatment may reveal the original color on hover or focus. Use genuine project images and captions; do not generate substitute screenshots or a new likeness.
 - The copy must sound like a credible short newspaper feature. Specific project facts matter more than slogans. No fabricated awards, clients, quotes, outcomes, dates, or faux news metadata.
@@ -73,7 +73,7 @@ Kershey's supplied brief and chat establish his name, role direction, preferred 
 
 ## Acceptance checks before implementation is called complete
 
-1. At 1440px and 390px, the Index recognizably follows the supplied newspaper composition and remains readable without any motion.
+1. At 1440px and 390px, the Index recognizably follows the supplied newspaper composition, fills its paper with a lead and supporting stories without large unused areas, and remains readable without any motion. Shorter sections end at their content rather than exposing a mostly empty sheet.
 2. The masthead reads **The Kershey Record**, uses Tribune-inspired blackletter lettering, and stays modest enough to let the lead story dominate.
 3. Each section has a distinct information job and publication-like composition. Index/About and Work/Archive do not repeat their main text.
 4. A busy reviewer reaches a project and a contact method in a few straightforward actions. The case study shows the actual contribution and evidence.
