@@ -1,5 +1,7 @@
 # The Builder's Post — portfolio design direction
 
+> Superseded by [The Build Journal — current content and UX plan](portfolio-v2.md). The six-section navigation below is retained only as design history.
+
 Status: design direction for review. Project facts and personal assets still need verification.
 
 ## Purpose and reader journey
