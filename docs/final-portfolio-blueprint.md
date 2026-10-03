@@ -19,7 +19,7 @@ The primary visitor route is **Index → Work → Contact**. About adds personal
 | Palette | Clean off-white `#F7F5EF`, ink `#171716`, restrained oxblood `#86262A`; rules use a light ink tint. |
 | Typography | Newsreader for headlines and reading text; IBM Plex Sans for navigation and controls; IBM Plex Mono for folio, page numbers, and captions. Test final weights and line breaks with real content. |
 | Density | Newspaper-like but comfortable: one dominant story, clear secondary hierarchy, no cards or needless whitespace. |
-| Images | One real portrait on Index; one lead project image on Work; secondary images only when genuine assets exist. Grayscale at rest; optional natural color on hover/focus. |
+| Images | Use the first user-supplied studio portrait (glasses, red top, plain background) on Index. Its quiet background and direct gaze fit the lead story. Use the original photo file in the built site, with a light grayscale newsprint treatment at rest and natural red clothing on hover/focus. The outdoor sunglasses photo is a possible secondary About image after cropping out the phone status bar; it is not the Index lead. One lead project image appears on Work when a genuine asset exists. |
 | Sound | OFF by default; discreet opt-in tick/tap feedback; remembered setting and visible off switch. |
 | Motion | Short page reveal, moving active rule, small headline and preview movement. All content remains available immediately. |
 
@@ -39,7 +39,7 @@ Desktop layout: rail approximately 220–250px wide; article page fills the rema
 
 **Lead article copy:** `Kershey Tumbagahan is a web developer and frontend builder. This portfolio brings his projects and ideas together in one place, with a focus on clear interfaces and practical digital work.`
 
-**Image:** One actual Kershey portrait, treated in grayscale with a light print texture. Until supplied, the design shows a plainly labelled portrait placeholder. Published caption should identify the real image accurately; do not use an invented biographical caption.
+**Image:** The first studio portrait supplied in chat, showing Kershey in glasses and a deep-red top on a plain background. Crop it as a portrait within the lead story; preserve his face and avoid AI reconstruction in the built site. Treat it lightly in grayscale at rest, then reveal the original color on hover/focus. Caption: `Kershey Tumbagahan`.
 
 **Brief A — Selected Work:** `Four projects, each with its own problem, interface, and story.` Link: `Explore the work` → Work.
 
@@ -117,4 +117,4 @@ Use a confirmed email link as the primary action, followed by verified GitHub, L
 
 ## Facts and assets still needed
 
-The design is settled, but final publication content depends on: Kershey's real portrait, project screenshots, exact project descriptions and contributions, dates/categories, project URLs, GitHub/LinkedIn/resume URLs, preferred public email, and any real Field Notes. The visible mockups are composition studies; their generated microcopy and image placeholders are not factual source material. Do not publish a fake portrait or invented project result.
+The portrait choice is settled from the two images supplied in chat; the original studio image file still needs to be added to the repository before implementation. Final publication content also depends on project screenshots, exact project descriptions and contributions, dates/categories, project URLs, GitHub/LinkedIn/resume URLs, and preferred public email. The visible mockups are composition studies; generated microcopy and image edits are not factual source material. Do not publish an AI-altered likeness or invented project result.
