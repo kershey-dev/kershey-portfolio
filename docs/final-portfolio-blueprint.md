@@ -1,5 +1,7 @@
 # The Builder's Post — portfolio blueprint
 
+> Superseded by [The Build Journal — current content and UX plan](portfolio-v2.md). The six-section navigation below is retained only as design history.
+
 **Decision status:** Final design and navigation direction. Publishable factual project details, portrait, and external links remain contingent on verification. This document supersedes earlier concept mockups where their text or layout differs.
 
 ## The idea
