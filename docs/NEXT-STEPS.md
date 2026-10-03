@@ -6,7 +6,7 @@ Prepare a Git repository preserving the uploaded portfolio design brief. Website
 
 ## Proposed implementation scope
 
-Build the Index/front page first, then review its typography, sidebar, column hierarchy, and interaction before expanding to Work, About, Archive, Field Notes, and Contact.
+Build the Home/front page first, then review its typography, sidebar, column hierarchy, and interaction before expanding to Work, About, and Contact. Follow [the current plan](portfolio-v2.md); Archive and Field Notes are not launch modules.
 
 ## Design direction from the attachment
 
@@ -14,16 +14,14 @@ Warm off-white newsprint, near-black ink, restrained deep-red accent, editorial 
 
 ## Inputs still needed for implementation
 
-- Real portrait image (not separately supplied).
+- Original studio portrait file for the website (a chat image and generated mockup have been reviewed, but the source file is not in this repository).
 - Verified project details and screenshots.
-- Confirmed GitHub, LinkedIn, resume, and contact destinations.
+- Confirmed LinkedIn, resume, and preferred public email destinations. GitHub is `https://github.com/kershey-dev`.
 - Frontend stack choice; no stack has been selected yet.
 
 ## Cloud continuation
 
-1. Create a GitHub repository and upload these files.
-2. Grant Codex access to that repository.
-3. Configure a Codex cloud environment.
-4. Submit the next task and confirm it is running in the cloud before shutting down the computer.
+1. Open the connected GitHub repository `kershey-dev/kershey-portfolio` in a Codex cloud environment.
+2. Submit a task using the current plan and confirm it is running in the cloud before shutting down the computer.
 
 Local desktop tasks require the computer to remain on. Cloud tasks run until completion or service limits; they are not indefinite background workers.
