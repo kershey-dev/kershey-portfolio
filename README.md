@@ -10,12 +10,13 @@ Repository preparation only. No application, dependency installation, or website
 
 - [Readable design brief](docs/design-brief.md)
 - [Original Word document](docs/design-brief.docx)
+- [Current content and UX plan](docs/portfolio-v2.md)
 - [Next-session handoff](docs/NEXT-STEPS.md)
 
 ## Continue with Codex
 
-Upload this repository to GitHub, grant Codex access, and select it in a Codex cloud environment. Start a cloud task to work while your computer is off. Connecting a repository alone does not start a task.
+This repository is connected to GitHub. Select it in a Codex cloud environment and start a cloud task to work while your computer is off. Connecting a repository alone does not start a task.
 
 Suggested next task:
 
-> Read docs/design-brief.md and docs/NEXT-STEPS.md. Build the Index/front page for Kershey’s newspaper portfolio first. Establish the frontend stack and implement a responsive first version. Use truthful content and request the real portrait and project assets when needed.
+> Read docs/portfolio-v2.md and docs/NEXT-STEPS.md. Build the Home/front page for Kershey’s newspaper portfolio first, then Work, About, and Contact. Establish the frontend stack and implement a responsive first version. Use truthful project details and original assets.
