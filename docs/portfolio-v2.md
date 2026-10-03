@@ -1,12 +1,12 @@
 # The Build Journal — content and UX plan
 
-**Current direction, revised 2026-10-03.** This replaces the earlier six-section blueprint. The approved front-page mockup supplies the newspaper character, but the next iteration needs smaller headlines and photographs and denser article layout. Generated text or project imagery is not a factual source. The site has not been built yet.
+**Current direction, revised 2026-10-03.** This replaces the earlier six-section blueprint. The current mockup uses a compact broadsheet, traditional Tribune-style masthead, smaller headlines and photographs, and tighter article layout. Generated text or project imagery is not a factual source. The site has not been built yet.
 
 ## Purpose
 
 A recruiter, collaborator, or client should be able to answer four questions quickly: Who is Kershey? What can he build? What did he personally contribute to real projects? How can I reach him? The newspaper concept should make those answers memorable and readable, without pages that repeat them.
 
-Keep the approved art direction: fixed contents rail, **THE BUILD JOURNAL** masthead, clean off-white paper, dark ink, restrained deep red, columns, rules, captions, the supplied studio portrait, and quiet interaction. Newspaper language belongs in the visual treatment and section folios. The main navigation uses familiar labels.
+Keep the fixed contents rail, clean off-white paper, dark ink, restrained deep red, columns, rules, captions, the supplied studio portrait, and quiet interaction. Use **The Tribune** as the working masthead in a traditional blackletter newspaper face; **The Kershey Tribune** is the more personal alternate shown in the design study. The publication name is still a choice to settle before implementation. Newspaper language belongs in the visual treatment and section folios. The main navigation uses familiar labels.
 
 ## Navigation and page jobs
 
@@ -28,8 +28,8 @@ The primary route for a busy visitor is **Index → Work → case study → Cont
 **Question answered:** Who is Kershey, what kinds of ideas interest him, and where can I read about his work?
 
 - Folio: `FRONT PAGE / PROFILE`.
-- Masthead: `THE BUILD JOURNAL`.
-- Working headline: `Kershey Tumbagahan Makes Things for the Web`. This is an editorial profile headline, not a motivational slogan. Test it beside the portrait; refine wording before implementation if it feels forced.
+- Working masthead: `The Tribune`, set in a traditional blackletter-inspired face; the alternate is `The Kershey Tribune`.
+- Working headline: `Kershey at work.` This is a short profile headline; the deck and article supply the personal detail.
 - Working deck: `A web developer and BSIT student in the Philippines, Kershey explores web interfaces, practical tools, and the ideas behind them.` Based on his public GitHub profile; review before publication.
 - Lead article beat: introduce Kershey as a person, then explain his interests in web development, UI/UX, and automation, then point to the real projects that show those interests in practice. Write this as a short third-person newspaper profile with two or three compact paragraphs. Do not invent a quote, biography, achievement, client, or personal motivation.
 - Image: the first supplied studio portrait, in glasses and a deep-red top. Use the original image in the website, in a single editorial image column with a plain caption: `Kershey Tumbagahan · Web Developer`.
@@ -105,9 +105,9 @@ Headline: `Have something worth building?` Supporting line: `For a project, coll
 
 ## Newspaper system and interaction
 
-- The fixed desktop rail is the contents column; the right side is the newspaper page. Use page numbers `01–06` when Notes is published, thin rules, editorial headlines, captioning, and a restrained red active marker. The masthead follows the approved front-page mockup: **THE BUILD JOURNAL**.
+- The fixed desktop rail is the contents column; the right side is the newspaper page. Use page numbers `01–06` when Notes is published, thin rules, editorial headlines, captioning, and a restrained red active marker. The new masthead direction is **The Tribune** in a traditional blackletter face, around 60px on a 1440px desktop study. The lead headline is around 42–44px and the article text around 15–16px on desktop; test real readability on phones.
 - Use clean off-white `#F7F5EF`, ink `#171716`, oxblood `#86262A`; Newsreader for editorial type, IBM Plex Sans for UI, IBM Plex Mono for small labels. Test line lengths and 16–18px body text on phones.
-- Treat type and photos like a broadsheet rather than a poster: a moderately sized masthead, a lead headline across two or three columns, and a portrait occupying one narrower column. Use actual article paragraphs, small side stories, captions, and logical rules. Avoid the oversized headline and image proportions in the last four-panel concept board.
+- Treat type and photos like a broadsheet rather than a poster: a moderately sized masthead, a lead headline across two or three columns, and a portrait occupying one narrower column. Use actual article paragraphs, small side stories, captions, and logical rules. Avoid the oversized headline and image proportions in the earlier generated boards. A local browser-rendered study was used to tune the typography precisely; it has not been published as a website.
 - Index has one real portrait and a reported-profile feel; Work has real screenshots and article hierarchy; About holds qualifications and process; Archive is an index plus GitHub evidence; Notes holds real writing; Contact is a simple notice. Shared visual language does not mean repeating copy or composition.
 - Motion is a brief page reveal, small active-rule slide, and restrained hover/focus feedback. Standard scrolling, direct links, back/forward, keyboard navigation, touch use, visible focus, and reduced-motion support are required. Sound is opt-in and never needed to understand the site.
 - Approved image mockups are visual studies. Generated copy or project imagery must not be published as facts or passed off as real screenshots.
