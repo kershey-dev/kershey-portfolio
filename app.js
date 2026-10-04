@@ -43,6 +43,7 @@ const GITHUB_PROFILE = "https://github.com/kershey-dev";
 const PUZZLE_WORDS = ["HTML", "CSS", "JAVASCRIPT", "REACT", "API", "GRID", "PIXEL", "CODE", "LINK", "BUG"];
 const PUZZLE_STORAGE_KEY = "kershey-record-puzzle-progress-v1";
 const pageTitles = Object.fromEntries(SECTIONS);
+const READING_ORDER = [...SECTIONS.map(([page]) => page), "puzzle"];
 
 function escapeHtml(value) {
   return String(value).replace(/[&<>"']/g, (character) => ({
@@ -88,110 +89,118 @@ function imagePlaceholder(label, className) {
 }
 
 function indexPage() {
-  return "<section class='lead' aria-labelledby='lead-title'>" +
-    "<div class='lead-copy'>" +
-      "<h1 class='lead-title' id='lead-title'>Building<br>for the Web<span class='red'>.</span></h1>" +
-      "<p class='deck'>Frontend interfaces, thoughtful<br class='desktop-break'> interactions, useful digital systems.</p>" +
-      "<div class='text-columns'>" +
-        "<p>I’m Kershey Tumbagahan, a web developer and builder focused on clean interfaces, thoughtful interactions, and practical digital systems. I enjoy turning ideas into usable experiences on the web.</p>" +
-        "<p>This space is a collection of my work, notes, and ongoing explorations — a way to document what I’m learning, share what I’m building, and connect the dots between design, code, and real-world problems.</p>" +
+  return eyebrow("Front page", "Profile") +
+    "<section class='lead' aria-labelledby='lead-title'>" +
+      "<div class='lead-copy'>" +
+        byline(["Web developer", "Frontend / builder", "Philippines"]) +
+        "<h1 class='lead-title' id='lead-title'>Building for the Web.</h1>" +
+        "<p class='deck'>Kershey Tumbagahan builds frontend interfaces and practical digital tools.</p>" +
+        "<div class='text-columns'>" +
+          "<p>I’m Kershey, a web developer and builder based in the Philippines. I’m interested in how a clear interface can make useful things easier to understand and use.</p>" +
+          "<p>This Record introduces my work, the ideas behind it, and the projects I’m developing. Start with the selected work, or read more about me.</p>" +
+        "</div>" +
+        storyLink("work", "Explore selected work") +
       "</div>" +
-    "</div>" +
-    "<figure class='lead-portrait'>" +
-      imagePlaceholder("Portrait image to be added", "portrait-placeholder") +
-      "<figcaption class='caption'>Portrait placeholder</figcaption>" +
-    "</figure>" +
-  "</section>" +
-  "<section class='front-briefs' aria-label='Inside this issue'>" +
-    "<article><div class='section-label'>Selected work</div><h2>Useful things<br>for real people<span class='red'>.</span></h2>" +
-      "<p>A small, curated selection of work across web interfaces and digital tools. Each project is an opportunity to solve a real problem and make the web a bit more helpful.</p>" +
-      storyLink("work", "View my work") +
-    "</article>" +
-    "<article><div class='section-label'>Field notes</div><h2>Notes from<br>the process<span class='red'>.</span></h2>" +
-      "<p>Thoughts on building for the web, learning in public, and the small details that make a big difference. The first notes are still being prepared.</p>" +
-      storyLink("notes", "Read the notes") +
-    "</article>" +
-  "</section>";
+      "<figure class='lead-portrait'>" +
+        imagePlaceholder("Portrait of Kershey to be added", "portrait-placeholder") +
+        "<figcaption class='caption'><span>Kershey Tumbagahan</span><span>Portrait</span></figcaption>" +
+      "</figure>" +
+    "</section>" +
+    "<section class='front-briefs' aria-label='Inside this issue'>" +
+      "<article><div class='section-label'>Selected work / 02</div><h2>Four projects, in focus.</h2>" +
+        "<p>Open the feature stories to see project previews and the details behind each piece of work.</p>" +
+        storyLink("work", "Read the work") +
+      "</article>" +
+      "<article><div class='section-label'>Profile / 03</div><h2>About Kershey</h2>" +
+        "<p>A closer look at my background, approach, and tools.</p>" +
+        storyLink("about", "Read the profile") +
+      "</article>" +
+      "<article><div class='section-label'>This issue</div><ul class='issue-list'>" +
+        "<li>" + pageLink("archive", "The project index") + "<span>04</span></li>" +
+        "<li>" + pageLink("notes", "From the notebook") + "<span>05</span></li>" +
+        "<li>" + pageLink("contact", "Correspondence") + "<span>06</span></li>" +
+      "</ul></article>" +
+    "</section>";
 }
 
-function workFeature(project) {
-  return "<article class='feature-main'>" +
-    "<div class='section-label'>Featured project</div>" +
-    "<h1>XillaFit<span class='red'>.</span></h1>" +
-    "<p class='project-deck'>A platform for customizing clothing online.</p>" +
-    "<figure>" + imagePlaceholder(project.imageLabel, "project-hero") +
-      "<figcaption class='caption'>Website screenshot placeholder for XillaFit.</figcaption></figure>" +
-    "<div class='feature-copy'>" +
-      "<p>The public project description covers interactive clothing previews, a design workflow, and order tracking. Screens and details of Kershey’s contribution will be added here.</p>" +
-      "<div class='project-facts'><div><span>Category</span><strong>Web platform</strong></div><div><span>Status</span><strong>Details forthcoming</strong></div>" +
-      storyLink("archive", "View in archive") + "</div>" +
-    "</div>" +
-  "</article>";
-}
-
-function workSideStory(project) {
-  return "<article class='work-side-story'><div class='section-label'>Selected work</div>" +
-    "<h2>" + escapeHtml(project.name) + "<span class='red'>.</span></h2>" +
-    "<p class='project-deck'>Project details to be added.</p>" +
-    "<figure>" + imagePlaceholder(project.imageLabel, "side-preview") +
-      "<figcaption class='caption'>Website screenshot placeholder for " + escapeHtml(project.name) + ".</figcaption></figure>" +
-    "<p class='project-summary'>The project story, Kershey’s contribution, and the final images will appear here once they are confirmed.</p>" +
-    "<div class='project-facts inline'><div><span>Category</span><strong>Project</strong></div><div><span>Status</span><strong>Details forthcoming</strong></div></div>" +
-    storyLink("archive", "View in archive") +
-  "</article>";
-}
-
-function workSmallStory(project) {
-  return "<article class='work-small-story'><div class='section-label'>Selected work</div>" +
-    "<h2>" + escapeHtml(project.name) + "<span class='red'>.</span></h2>" +
-    "<div class='small-story-body'>" + imagePlaceholder(project.imageLabel, "small-preview") +
-      "<p>The project story and Kershey’s role will be added with the final screenshots.</p></div>" +
-    "<div class='project-facts inline'><div><span>Status</span><strong>Details forthcoming</strong></div></div>" +
-    storyLink("archive", "View in archive") +
-  "</article>";
+function projectBrief(project, index) {
+  return "<article class='secondary-story'>" +
+    imagePlaceholder(project.imageLabel, "small-preview") +
+    "<div><div class='section-label'>" + String(index + 1).padStart(2, "0") + " / " + project.kind + "</div>" +
+      "<h3>" + escapeHtml(project.name) + "</h3>" +
+      "<p>" + escapeHtml(project.line) + "</p>" +
+      "<a class='story-link' href='?page=archive' data-page='archive'>See in Archive <span aria-hidden='true'>→</span></a>" +
+    "</div></article>";
 }
 
 function workPage() {
-  return "<section class='work-top' aria-label='Featured and selected work'>" +
-      workFeature(PROJECTS[0]) + workSideStory(PROJECTS[1]) +
+  const lead = PROJECTS[0];
+  return eyebrow("Work", "Feature stories") +
+    "<h1 class='page-title'>Work in focus.</h1>" +
+    "<p class='page-intro'>Selected projects, given room for their screens, their purpose, and the work behind them.</p>" +
+    "<section class='work-feature' aria-label='Selected project stories'>" +
+      "<article class='feature-main'>" +
+        "<div class='section-label'>Lead story / " + escapeHtml(lead.name) + "</div>" +
+        "<h2>" + escapeHtml(lead.name) + "</h2>" +
+        "<figure>" + imagePlaceholder(lead.imageLabel, "project-hero") +
+        "<figcaption class='caption'><span>" + escapeHtml(lead.name) + " / Project image</span><span>Placeholder</span></figcaption></figure>" +
+        "<p class='deck'>" + escapeHtml(lead.line) + "</p>" +
+        "<div class='feature-copy'><p>" + escapeHtml(lead.detail) + "</p>" +
+          "<p>Kershey’s exact contribution and the project images will be added to the full case study.</p></div>" +
+        storyLink("archive", "See the project index") +
+      "</article>" +
+      "<div class='secondary-stories' aria-label='More project stories'>" +
+        PROJECTS.slice(1).map((project, index) => projectBrief(project, index + 1)).join("") +
+      "</div>" +
     "</section>" +
-    "<section class='work-bottom' aria-label='More selected work'>" +
-      workSmallStory(PROJECTS[2]) + workSmallStory(PROJECTS[3]) +
-    "</section>";
+    "<hr class='double-rule'>" +
+    "<div class='byline'><span>Four selected projects</span><span>Complete list and public code in the Archive</span></div>" +
+    storyLink("archive", "Open the complete Archive");
 }
 
 function aboutPage() {
   const tools = [
-    ["HTML", "Structure for the web."],
-    ["CSS", "Design and presentation."],
-    ["JavaScript", "Interactive experiences."],
-    ["React", "Component-based interfaces."],
-    ["Git", "Version control."],
-    ["Figma", "Design and prototyping."],
+    ["H", "HTML"],
+    ["C", "CSS"],
+    ["JS", "JavaScript"],
+    ["R", "React"],
+    ["F", "Figma"],
+    ["G", "Git"],
   ];
-  return "<div class='section-label about-kicker'>Profile / About</div>" +
-    "<h1 class='about-title'>The person behind the work<span class='red'>.</span></h1>" +
-    "<p class='about-deck'>Kershey Tumbagahan is a web developer and builder focused on thoughtful interfaces and practical digital systems.</p>" +
-    "<section class='about-columns' aria-label='Profile'>" +
-      "<figure class='about-image'>" + imagePlaceholder("Portrait image to be added", "profile-portrait") +
-        "<figcaption class='caption'>Portrait to be added.</figcaption></figure>" +
-      "<article class='about-story'>" +
-        "<p>I build for people — simple, useful web experiences that make complex things easier to understand and do. My work lives at the intersection of frontend development, interface design, and practical systems thinking.</p>" +
-        "<p>I start by understanding the task and who will use the result. Then I make a clear structure, build a working version, and refine it with feedback until the details feel natural.</p>" +
+  return eyebrow("About", "A developer’s record") +
+    "<h1 class='page-title'>The person behind the work.</h1>" +
+    "<p class='page-intro'>Kershey Tumbagahan is a web developer and builder based in the Philippines.</p>" +
+    "<section class='profile-layout'>" +
+      "<article class='profile-copy'>" +
+        "<div class='section-label'>The developer</div>" +
+        "<p>Kershey builds frontend interfaces and practical digital tools. His work focuses on clear structure, readable content, and details that make a product easier to use.</p>" +
+        "<p>His approach starts with the problem, then shapes the content and interaction around what someone needs to do.</p>" +
       "</article>" +
-      "<article class='about-approach'><h2>What guides the work</h2>" +
-        "<p>Clear visuals, readable content, and thoughtful interactions shape how people think, work, and feel when using a website.</p>" +
-        "<p>I’m interested in projects that combine clarity, usefulness, and a bit of creativity — from everyday workflows to interfaces that help people stay informed and connected.</p>" +
-      "</article>" +
-      "<aside class='about-facts' aria-label='At a glance'>" +
-        "<div><h2>Based in</h2><p>Philippines</p></div>" +
-        "<div><h2>Focus</h2><p>Frontend development</p></div>" +
-        "<div><h2>Interest</h2><p>Interfaces and interactions</p></div>" +
+      "<figure>" + imagePlaceholder("Portrait of Kershey to be added", "profile-portrait") +
+        "<figcaption class='caption'><span>Portrait</span><span>To be added</span></figcaption></figure>" +
+      "<aside class='quick-file' aria-label='Quick profile'>" +
+        "<h2>Quick file</h2>" +
+        "<dl>" +
+          "<div class='file-row'><dt>Based in</dt><dd>Philippines</dd></div>" +
+          "<div class='file-row'><dt>Work</dt><dd>Web development</dd></div>" +
+          "<div class='file-row'><dt>Focus</dt><dd>Frontend and useful digital tools</dd></div>" +
+          "<div class='file-row'><dt>Study</dt><dd>BSIT</dd></div>" +
+        "</dl>" +
       "</aside>" +
     "</section>" +
-    "<section class='about-tools' aria-label='Tools of the trade'>" +
-      "<div class='about-tools-label'><h2>Tools of the trade</h2><span>Technology directory</span></div>" +
-      "<ul>" + tools.map((tool) => "<li><strong>" + tool[0] + "</strong><span>" + tool[1] + "</span></li>").join("") + "</ul>" +
+    "<section class='profile-lower'>" +
+      "<article><div class='section-label'>A closer look</div><h2>How I like to work.</h2>" +
+        "<div class='approach-columns'>" +
+          "<p>I start by understanding the task and who will use the result. Then I make a clear structure, build a working version, and refine it as I learn what needs to change.</p>" +
+          "<p>Good navigation, readable content, and careful feedback help people move through a site without guessing. Those details guide the way I build.</p>" +
+        "</div>" + storyLink("work", "Read the project stories") +
+      "</article>" +
+      "<aside class='tools-panel'><h2 class='tools-heading'>Tools of the trade</h2>" +
+        "<ul class='tool-list'>" + tools.map((tool) =>
+          "<li><span class='tool-mark' aria-hidden='true'>" + tool[0] + "</span><span>" + tool[1] + "</span></li>"
+        ).join("") + "</ul>" +
+        "<p class='tool-caption'>A short working list. Project-specific tools belong with each case study.</p>" +
+      "</aside>" +
     "</section>";
 }
 
@@ -306,7 +315,7 @@ const PAGE_RENDERERS = {
 function navigationMarkup() {
   const current = currentPage();
   return "<div class='rail-topline'>" +
-      "<div><div class='rail-name'>KERSHEY<br>TUMBAGAHAN</div><div class='rail-role'>Web developer<br>&amp; builder</div></div>" +
+      "<div><div class='rail-name'>KERSHEY<br>TUMBAGAHAN</div><div class='rail-role'>Web developer<br>Frontend / builder</div></div>" +
       "<button class='mobile-menu' id='mobile-menu' type='button' aria-expanded='false' aria-controls='main-nav'>" +
         "<span>Contents</span><span aria-hidden='true'>☰</span></button>" +
     "</div>" +
@@ -319,11 +328,11 @@ function navigationMarkup() {
           String(index + 1).padStart(2, "0") + "</span><span>" + section[1] + "</span></a>"
       ).join("") +
     "</nav>" +
+    "<div class='back-page-link'><div class='rail-label'>A little extra</div>" +
+      "<a href='?page=puzzle' data-page='puzzle'" + (current === "puzzle" ? " aria-current='page'" : "") + ">Back Page / Word Search</a></div>" +
     "<div class='directory'><div class='rail-label'>Directory</div>" +
-      "<a href='" + GITHUB_PROFILE + "' target='_blank' rel='noopener noreferrer'>GitHub</a>" +
-      "<span class='directory-pending' aria-label='LinkedIn link to be added'>LinkedIn</span>" +
-      "<span class='directory-pending' aria-label='Resume link to be added'>Resume</span>" +
-      "<span class='directory-pending' aria-label='Email address to be added'>Email</span></div>" +
+      "<a href='" + GITHUB_PROFILE + "' target='_blank' rel='noopener noreferrer'>GitHub ↗</a>" +
+      "<a href='?page=contact' data-page='contact'>Email / To be added</a></div>" +
     "<div class='rail-bottom'><button class='sound-toggle' id='sound-toggle' type='button' aria-pressed='false'>" +
       "<span>Sound</span><span class='sound-state'>Off</span></button></div>";
 }
@@ -333,11 +342,9 @@ function mountShell() {
     "<div class='sheet'>" +
       "<aside class='rail' aria-label='Portfolio contents'>" + navigationMarkup() + "</aside>" +
       "<main class='paper'>" +
-        "<div class='publication-header'><span class='header-place'>Philippines <b>/</b> Portfolio</span>" +
-          "<header class='masthead'>The Kershey Record</header>" +
-          "<span class='header-topics'><span>Ideas</span><span>Systems</span><span>Interfaces</span><span>People</span></span></div>" +
-        "<div class='edition-line'><span>A personal publication on the craft of a more useful web</span>" +
-          "<span><strong id='edition-page'>Front page</strong><i aria-hidden='true'></i>Portfolio</span></div>" +
+        "<div class='folio'><span>Philippines / Portfolio</span><span>Ideas · Systems · Interfaces · People</span></div>" +
+        "<header class='masthead'>The Kershey Record</header>" +
+        "<div class='edition-line'><span>A personal publication on web development and useful things for the web</span><span>Portfolio / " + new Date().getFullYear() + "</span></div>" +
         "<div class='page-content' id='page-content' tabindex='-1'></div>" +
         "<footer class='page-footer'><span>Kershey Tumbagahan / Web developer &amp; builder</span>" +
           "<span><a href='?page=index' data-page='index'>Back to the front page ↑</a></span></footer>" +
@@ -349,8 +356,6 @@ function renderPage() {
   const page = currentPage();
   if (page !== "puzzle" && puzzleAbortController) puzzleAbortController.abort();
   document.title = (page === "puzzle" ? "Back Page" : pageTitles[page]) + " — The Kershey Record";
-  document.querySelector(".sheet").dataset.page = page;
-  document.getElementById("edition-page").textContent = page === "index" ? "Front page" : page === "puzzle" ? "Back page" : pageTitles[page];
   document.getElementById("page-content").innerHTML = PAGE_RENDERERS[page]();
 
   document.querySelectorAll(".contents-nav a[data-page], .back-page-link a[data-page]").forEach((link) => {
@@ -377,10 +382,7 @@ function navigate(page) {
     window.history.pushState({ page }, "", target);
   }
   renderPage();
-  if (window.matchMedia("(max-width: 720px)").matches) {
-    const behavior = window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth";
-    window.scrollTo({ top: 0, behavior });
-  }
+  window.scrollTo({ top: 0, behavior: "auto" });
 }
 
 function deterministicRandom(seed) {
@@ -441,11 +443,14 @@ function readPuzzleProgress() {
 }
 
 let foundWords = readPuzzleProgress();
-let activeSound = false;
+let activeSound = true;
 let audioContext = null;
 let puzzleAbortController = null;
+let lastHoverSoundAt = 0;
+let lastPageTurnAt = 0;
+let bottomReachedAt = 0;
 
-function playTick() {
+function playTick(kind = "navigation") {
   if (!activeSound) return;
   try {
     const AudioContextClass = window.AudioContext || window.webkitAudioContext;
@@ -455,8 +460,8 @@ function playTick() {
     const oscillator = audioContext.createOscillator();
     const gain = audioContext.createGain();
     oscillator.type = "sine";
-    oscillator.frequency.setValueAtTime(760, audioContext.currentTime);
-    gain.gain.setValueAtTime(0.025, audioContext.currentTime);
+    oscillator.frequency.setValueAtTime(kind === "hover" ? 620 : 760, audioContext.currentTime);
+    gain.gain.setValueAtTime(kind === "hover" ? 0.008 : 0.02, audioContext.currentTime);
     gain.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 0.035);
     oscillator.connect(gain);
     gain.connect(audioContext.destination);
@@ -752,6 +757,40 @@ async function loadContributions() {
 }
 
 function bindShell() {
+  const atPageBottom = () => window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - 3;
+
+  window.addEventListener("scroll", () => {
+    if (!atPageBottom()) bottomReachedAt = 0;
+    else if (!bottomReachedAt) bottomReachedAt = performance.now();
+  }, { passive: true });
+
+  window.addEventListener("wheel", (event) => {
+    if (event.deltaY <= 0 || event.ctrlKey || !atPageBottom()) return;
+    const now = performance.now();
+    if (!bottomReachedAt) {
+      bottomReachedAt = now;
+      return;
+    }
+    if (now - bottomReachedAt < 220 || now - lastPageTurnAt < 900) return;
+    const nextPage = READING_ORDER[READING_ORDER.indexOf(currentPage()) + 1];
+    if (!nextPage) return;
+    event.preventDefault();
+    lastPageTurnAt = now;
+    bottomReachedAt = 0;
+    navigate(nextPage);
+    playTick();
+  }, { passive: false });
+
+  document.getElementById("app").addEventListener("pointerover", (event) => {
+    if (event.pointerType !== "mouse") return;
+    const target = event.target.closest("a, button");
+    if (!target || target.contains(event.relatedTarget)) return;
+    const now = performance.now();
+    if (now - lastHoverSoundAt < 150) return;
+    lastHoverSoundAt = now;
+    playTick("hover");
+  });
+
   document.getElementById("mobile-menu").addEventListener("click", (event) => {
     const button = event.currentTarget;
     const nav = document.getElementById("main-nav");
@@ -794,9 +833,9 @@ function bindShell() {
 }
 
 try {
-  activeSound = window.localStorage.getItem("kershey-record-sound") === "on";
+  activeSound = window.localStorage.getItem("kershey-record-sound") !== "off";
 } catch {
-  activeSound = false;
+  activeSound = true;
 }
 
 mountShell();

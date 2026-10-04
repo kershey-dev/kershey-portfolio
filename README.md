@@ -4,9 +4,7 @@ A newspaper-style portfolio for Kershey Tumbagahan, built as a responsive static
 
 ## Run locally
 
-From this directory, run `npm run dev`, then open http://localhost:8000. Stop the server with Ctrl+C.
-
-This is a plain static site, so the development command starts Python's built-in file server; it does not bundle or compile the files. Node.js/npm and Python must be available on your PATH.
+From this directory, start a static file server with python3 -m http.server 8000, then open http://localhost:8000.
 
 ## Pages
 
@@ -19,6 +17,8 @@ This is a plain static site, so the development command starts Python's built-in
 - Back Page — keyboard and pointer accessible word search with short web trivia.
 
 Project and portrait images are visibly marked placeholders. The public GitHub archive loads live data and falls back to profile and repository links if the data services are unavailable.
+
+On desktop, scrolling past the bottom of a section opens the next section in reading order. The final Back Page stays at its end. Links and the sidebar still provide direct navigation. Sound starts on for new visitors and can be muted from the sidebar; a saved mute choice is respected. Browsers may require the first click or scroll before audio can play.
 
 ## Design notes
 
