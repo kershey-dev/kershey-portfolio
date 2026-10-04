@@ -16,11 +16,12 @@ body {
   grid-template-columns: 225px minmax(0, 1fr);
   width: min(calc(100% - 68px), 1520px);
   min-height: calc(100vh - 42px);
-  margin: 29px auto;
+  margin: 12px auto;
   border: 2px solid var(--ink);
   background: var(--paper);
 }
 
+/* Keep the front page content-sized so browser zoom can reflow it naturally. */
 .sheet[data-page="index"] {
   min-height: 0;
 }
@@ -688,7 +689,7 @@ body {
   .sheet {
     grid-template-columns: 195px minmax(0, 1fr);
     width: min(calc(100% - 32px), 1700px);
-    margin-block: 16px;
+    margin-block: 12px;
   }
 
   .rail {
@@ -1073,198 +1074,5 @@ body {
 
   .about-facts div + div {
     margin-top: 10px;
-  }
-}
-
-/* Keep the Index on one screen in short desktop windows without clipping it. */
-@media (min-width: 721px) and (max-height: 700px) {
-  .sheet {
-    grid-template-columns: 150px minmax(0, 1fr);
-    width: min(calc(100% - 16px), 1520px);
-    min-height: calc(100svh - 16px);
-    margin-block: 8px;
-  }
-
-  .sheet[data-page="index"] {
-    min-height: calc(100svh - 16px);
-  }
-
-  .rail {
-    min-height: calc(100svh - 20px);
-    padding: 14px 12px 12px;
-  }
-
-  .rail-name {
-    font-size: 18px;
-  }
-
-  .rail-role {
-    margin: 6px 0 12px;
-    font-size: 10px;
-  }
-
-  .rail-rule {
-    margin-bottom: 12px;
-  }
-
-  .rail-label {
-    margin-bottom: 6px;
-    font-size: 11px;
-  }
-
-  .contents-nav {
-    gap: 0;
-  }
-
-  .contents-nav a {
-    grid-template-columns: 29px 1fr;
-    gap: 5px;
-    padding: 4px 0;
-    font-size: 13px;
-  }
-
-  .directory {
-    margin-top: 12px;
-    padding-top: 10px;
-  }
-
-  .directory a,
-  .directory-pending {
-    margin: 0;
-    font-size: 15px;
-    line-height: 1.15;
-  }
-
-  .rail-bottom {
-    margin-top: auto;
-    padding-top: 10px;
-  }
-
-  .sound-toggle {
-    justify-content: flex-start;
-    gap: 0;
-    font-size: 10px;
-  }
-
-  .sound-toggle .sound-state {
-    display: none;
-  }
-
-  .paper {
-    padding: 0 14px 8px;
-  }
-
-  .sheet[data-page="index"] .publication-header {
-    min-height: 98px;
-  }
-
-  .sheet[data-page="index"] .header-place,
-  .sheet[data-page="index"] .header-topics {
-    padding-bottom: 6px;
-    font-size: 13px;
-  }
-
-  .sheet[data-page="index"] .header-topics {
-    gap: 12px;
-  }
-
-  .sheet[data-page="index"] .masthead {
-    font-size: clamp(48px, 6.9vw, 68px);
-  }
-
-  .sheet[data-page="index"] .edition-line {
-    min-height: 28px;
-    padding: 4px 0;
-    font-size: 9px;
-    letter-spacing: 0.08em;
-  }
-
-  .sheet[data-page="index"] .edition-line > span:first-child {
-    max-width: 70%;
-  }
-
-  .sheet[data-page="index"] .edition-line > span:last-child {
-    gap: 10px;
-    letter-spacing: 0.06em;
-  }
-
-  .sheet[data-page="index"] .edition-line i {
-    height: 14px;
-  }
-
-  .sheet[data-page="index"] .lead {
-    grid-template-columns: minmax(0, 1.72fr) minmax(0, 1fr);
-    gap: 12px;
-    padding: 6px 0 8px;
-  }
-
-  .sheet[data-page="index"] .lead-title {
-    font-size: clamp(48px, 5.25vw, 58px);
-    line-height: 0.8;
-  }
-
-  .sheet[data-page="index"] .lead .deck {
-    margin-top: 5px;
-    padding-bottom: 6px;
-    font-size: clamp(18px, 2vw, 21px);
-    line-height: 1;
-  }
-
-  .sheet[data-page="index"] .text-columns {
-    gap: 10px;
-    padding-top: 7px;
-    font-size: 13px;
-    line-height: 1.08;
-  }
-
-  .sheet[data-page="index"] .text-columns p + p {
-    padding-left: 10px;
-  }
-
-  .sheet[data-page="index"] .lead-portrait {
-    margin-top: 0;
-    padding-left: 10px;
-  }
-
-  .sheet[data-page="index"] .portrait-placeholder {
-    aspect-ratio: 1.3;
-  }
-
-  .sheet[data-page="index"] .lead-portrait .caption {
-    padding-top: 3px;
-    font-size: 10px;
-  }
-
-  .sheet[data-page="index"] .front-briefs {
-    gap: 14px;
-    padding-top: 6px;
-  }
-
-  .sheet[data-page="index"] .front-briefs article + article {
-    padding-left: 14px;
-  }
-
-  .sheet[data-page="index"] .front-briefs .section-label {
-    font-size: 11px;
-  }
-
-  .sheet[data-page="index"] .front-briefs h2 {
-    margin: 2px 0 5px;
-    font-size: clamp(26px, 3vw, 32px);
-    line-height: 0.86;
-  }
-
-  .sheet[data-page="index"] .front-briefs p {
-    font-size: 12px;
-    line-height: 1.08;
-  }
-
-  .sheet[data-page="index"] .front-briefs .story-link {
-    margin-top: 4px;
-    font-size: 11px;
-  }
-
-  .sheet[data-page="index"] .page-footer {
-    display: none;
   }
 }
