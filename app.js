@@ -42,6 +42,8 @@ const REPOSITORY_NAMES = ["mapty", "FBA", "xillafit-flutter", "racipay", "Senten
 const GITHUB_PROFILE = "https://github.com/kershey-dev";
 const PUZZLE_WORDS = ["HTML", "CSS", "JAVASCRIPT", "REACT", "API", "GRID", "PIXEL", "CODE", "LINK", "BUG"];
 const PUZZLE_STORAGE_KEY = "kershey-record-puzzle-progress-v1";
+const SOUND_STORAGE_KEY = "kershey-record-sound";
+const INTRO_MOTION_KEY = "kershey-record-intro-played";
 const pageTitles = Object.fromEntries(SECTIONS);
 const READING_ORDER = [...SECTIONS.map(([page]) => page), "puzzle"];
 
@@ -99,8 +101,10 @@ function indexPage() {
       "</div>" +
     "</div>" +
     "<figure class='lead-portrait'>" +
-      imagePlaceholder("Portrait image to be added", "portrait-placeholder") +
-      "<figcaption class='caption'><span>Portrait placeholder</span><span class='caption-note'>A continuing study in curiosity, craft, and better things on the web.</span></figcaption>" +
+      "<div class='image-placeholder portrait-placeholder portrait-photo'>" +
+      "<img class='portrait-image' src='assets/images/profile.jpg' alt='Kershey Tumbagahan'>" +
+      "</div>" +
+      "<figcaption class='caption'>Kershey Tumbagahan<span class='caption-note'>A continuing study in curiosity, craft, and better things on the web.</span></figcaption>" +
     "</figure>" +
   "</section>" +
   "<section class='front-briefs' aria-label='Inside this issue'>" +
@@ -349,8 +353,72 @@ function mountShell() {
     "</div>";
 }
 
+function animatePaper(className) {
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  const sheet = document.querySelector(".sheet");
+  if (!sheet) return;
+  sheet.classList.remove("is-arriving", "is-page-settling");
+  void sheet.offsetWidth;
+  sheet.classList.add(className);
+  sheet.addEventListener("animationend", () => sheet.classList.remove(className), { once: true });
+}
+
+function waitForNewspaperAssets() {
+  const decodeImage = (image) => image.decode ? image.decode().catch(() => {}) : Promise.resolve();
+  const imagePromises = Array.from(document.images, (image) => {
+    if (image.complete) return decodeImage(image);
+    return new Promise((resolve) => {
+      image.addEventListener("load", () => decodeImage(image).then(resolve), { once: true });
+      image.addEventListener("error", resolve, { once: true });
+    });
+  });
+  const paperUrls = new Set();
+  document.querySelectorAll(".paper-art span").forEach((element) => {
+    const background = getComputedStyle(element).backgroundImage;
+    for (const match of background.matchAll(/url\([\"']?([^\"')]+)[\"']?\)/g)) paperUrls.add(match[1]);
+  });
+  const paperPromises = Array.from(paperUrls, (url) => new Promise((resolve) => {
+    const image = new Image();
+    let settled = false;
+    const finish = () => {
+      if (settled) return;
+      settled = true;
+      decodeImage(image).then(resolve);
+    };
+    image.addEventListener("load", finish, { once: true });
+    image.addEventListener("error", () => {
+      if (!settled) {
+        settled = true;
+        resolve();
+      }
+    }, { once: true });
+    image.src = url;
+    if (image.complete) finish();
+  }));
+  return Promise.allSettled([document.fonts.ready, ...imagePromises, ...paperPromises]);
+}
+
+function playIntroIfNeeded() {
+  let alreadyPlayed = false;
+  try {
+    alreadyPlayed = window.sessionStorage.getItem(INTRO_MOTION_KEY) === "played";
+    if (!alreadyPlayed) window.sessionStorage.setItem(INTRO_MOTION_KEY, "played");
+  } catch {
+    // The entrance still runs once for this page load when storage is unavailable.
+  }
+  if (!alreadyPlayed && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    const openingPage = currentPage();
+    waitForNewspaperAssets().then(() => {
+      if (lastRenderedPage === openingPage) animatePaper("is-arriving");
+    });
+  }
+}
+
+let lastRenderedPage = null;
+
 function renderPage() {
   const page = currentPage();
+  const pageChanged = lastRenderedPage !== null && lastRenderedPage !== page;
   if (page !== "puzzle" && puzzleAbortController) puzzleAbortController.abort();
   document.title = (page === "puzzle" ? "Back Page" : pageTitles[page]) + " — The Kershey Record";
   document.querySelector(".sheet").dataset.page = page;
@@ -371,6 +439,13 @@ function renderPage() {
 
   if (page === "archive") loadArchiveData();
   if (page === "puzzle") mountPuzzle();
+
+  if (lastRenderedPage === null) playIntroIfNeeded();
+  else if (pageChanged) {
+    animatePaper("is-page-settling");
+    playTick("page");
+  }
+  lastRenderedPage = page;
 }
 
 function navigate(page) {
@@ -443,33 +518,113 @@ function readPuzzleProgress() {
 }
 
 let foundWords = readPuzzleProgress();
-let activeSound = false;
+let activeSound = (() => {
+  try {
+    return window.localStorage.getItem(SOUND_STORAGE_KEY) !== "off";
+  } catch {
+    return true;
+  }
+})();
 let audioContext = null;
+let audioUnlockPromise = null;
+let audioUnlocked = false;
 let puzzleAbortController = null;
 let lastHoverSoundAt = 0;
-let lastPageTurnAt = 0;
-let bottomReachedAt = 0;
+let wheelGestureActive = false;
+let wheelGestureCanTurnPage = false;
+let wheelGestureTurnedPage = false;
+let wheelGestureTimer = 0;
 
-function playTick(kind = "navigation") {
-  if (!activeSound) return;
+function unlockAudio() {
+  if (!activeSound) return Promise.resolve(false);
   try {
     const AudioContextClass = window.AudioContext || window.webkitAudioContext;
-    if (!AudioContextClass) return;
+    if (!AudioContextClass) return Promise.resolve(false);
     if (!audioContext) audioContext = new AudioContextClass();
-    if (audioContext.state === "suspended") audioContext.resume();
-    const oscillator = audioContext.createOscillator();
-    const gain = audioContext.createGain();
-    oscillator.type = "sine";
-    oscillator.frequency.setValueAtTime(kind === "hover" ? 620 : 760, audioContext.currentTime);
-    gain.gain.setValueAtTime(kind === "hover" ? 0.008 : 0.02, audioContext.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 0.035);
-    oscillator.connect(gain);
-    gain.connect(audioContext.destination);
-    oscillator.start();
-    oscillator.stop(audioContext.currentTime + 0.04);
+    if (audioContext.state === "running") {
+      audioUnlocked = true;
+      return Promise.resolve(true);
+    }
+    if (!audioUnlockPromise) {
+      audioUnlockPromise = audioContext.resume()
+        .then(() => {
+          audioUnlocked = audioContext.state === "running";
+          return audioUnlocked;
+        })
+        .catch(() => false)
+        .finally(() => {
+          audioUnlockPromise = null;
+        });
+    }
+    return audioUnlockPromise;
   } catch {
-    // Sound is optional; browser audio restrictions never affect reading.
+    // Browsers without an available audio context can still use the page.
+    return Promise.resolve(false);
   }
+}
+
+function emitTick(kind) {
+  if (!activeSound || !audioContext || !audioUnlocked || audioContext.state !== "running") return;
+  try {
+    const isHover = kind === "hover";
+    const now = audioContext.currentTime;
+    const duration = isHover ? 0.02 : 0.085;
+    const frameCount = Math.max(1, Math.floor(audioContext.sampleRate * duration));
+    const buffer = audioContext.createBuffer(1, frameCount, audioContext.sampleRate);
+    const noise = buffer.getChannelData(0);
+    for (let index = 0; index < frameCount; index += 1) {
+      noise[index] = (Math.random() * 2 - 1) * (1 - index / frameCount);
+    }
+
+    const source = audioContext.createBufferSource();
+    const filter = audioContext.createBiquadFilter();
+    const gain = audioContext.createGain();
+    source.buffer = buffer;
+    filter.type = isHover ? "highpass" : "lowpass";
+    filter.frequency.setValueAtTime(isHover ? 1900 : 850, now);
+    filter.Q.setValueAtTime(0.7, now);
+    gain.gain.setValueAtTime(0.0001, now);
+    gain.gain.exponentialRampToValueAtTime(isHover ? 0.16 : 0.2, now + 0.001);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + duration);
+    source.connect(filter);
+    filter.connect(gain);
+    gain.connect(audioContext.destination);
+    source.start(now);
+    source.stop(now + duration);
+
+    if (!isHover) {
+      const oscillator = audioContext.createOscillator();
+      const bodyGain = audioContext.createGain();
+      oscillator.type = "sine";
+      oscillator.frequency.setValueAtTime(260, now);
+      oscillator.frequency.exponentialRampToValueAtTime(135, now + 0.075);
+      bodyGain.gain.setValueAtTime(0.0001, now);
+      bodyGain.gain.exponentialRampToValueAtTime(0.07, now + 0.002);
+      bodyGain.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
+      oscillator.connect(bodyGain);
+      bodyGain.connect(audioContext.destination);
+      oscillator.start(now);
+      oscillator.stop(now + 0.085);
+    }
+  } catch {
+    // Sound is optional; browsers without Web Audio can still use the page.
+  }
+}
+
+function playTick(kind = "page") {
+  if (!activeSound) return;
+  if (kind === "hover") {
+    // Hover never creates or resumes an audio context; a real user gesture must unlock it first.
+    if (audioUnlocked && audioContext && audioContext.state === "running") emitTick(kind);
+    return;
+  }
+  if (audioUnlocked && audioContext && audioContext.state === "running") {
+    emitTick(kind);
+    return;
+  }
+  unlockAudio().then((ready) => {
+    if (ready && activeSound) emitTick(kind);
+  });
 }
 
 function paintFoundWords() {
@@ -581,7 +736,6 @@ function mountPuzzle() {
       // The puzzle remains playable when local storage is unavailable.
     }
     paintFoundWords();
-    playTick();
     updatePuzzleStatus(match + " found. " + foundWords.size + " of " + PUZZLE_WORDS.length + " words found.");
     if (foundWords.size === PUZZLE_WORDS.length) {
       updatePuzzleStatus("All ten words found. The edition is complete.");
@@ -759,34 +913,42 @@ async function loadContributions() {
 function bindShell() {
   const atPageBottom = () => window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - 3;
 
-  window.addEventListener("scroll", () => {
-    if (!atPageBottom()) bottomReachedAt = 0;
-    else if (!bottomReachedAt) bottomReachedAt = performance.now();
-  }, { passive: true });
-
   window.addEventListener("wheel", (event) => {
-    if (event.deltaY <= 0 || event.ctrlKey || !atPageBottom()) return;
-    const now = performance.now();
-    if (!bottomReachedAt) {
-      bottomReachedAt = now;
-      return;
+    if (window.matchMedia("(max-width: 720px)").matches) return;
+
+    if (!wheelGestureActive) {
+      wheelGestureActive = true;
+      wheelGestureCanTurnPage = atPageBottom();
+      wheelGestureTurnedPage = false;
     }
-    if (now - bottomReachedAt < 220 || now - lastPageTurnAt < 900) return;
+
+    window.clearTimeout(wheelGestureTimer);
+    wheelGestureTimer = window.setTimeout(() => {
+      wheelGestureActive = false;
+      wheelGestureCanTurnPage = false;
+      wheelGestureTurnedPage = false;
+    }, 460);
+
+    if (event.deltaY <= 0 || event.ctrlKey || !wheelGestureCanTurnPage || wheelGestureTurnedPage) return;
     const nextPage = READING_ORDER[READING_ORDER.indexOf(currentPage()) + 1];
     if (!nextPage) return;
     event.preventDefault();
-    lastPageTurnAt = now;
-    bottomReachedAt = 0;
+    wheelGestureTurnedPage = true;
     navigate(nextPage);
-    playTick();
   }, { passive: false });
+
+  ["pointerdown", "keydown", "click", "wheel", "touchstart"].forEach((type) => {
+    document.addEventListener(type, unlockAudio, { passive: type === "wheel" || type === "touchstart" });
+  });
 
   document.getElementById("app").addEventListener("pointerover", (event) => {
     if (event.pointerType !== "mouse") return;
+    if (!(event.target instanceof Element)) return;
     const target = event.target.closest("a, button");
-    if (!target || target.contains(event.relatedTarget)) return;
+    if (!target || target.closest(".puzzle-grid") || target.disabled || target.getAttribute("aria-disabled") === "true") return;
+    if (target.contains(event.relatedTarget)) return;
     const now = performance.now();
-    if (now - lastHoverSoundAt < 150) return;
+    if (now - lastHoverSoundAt < 120) return;
     lastHoverSoundAt = now;
     playTick("hover");
   });
@@ -804,7 +966,7 @@ function bindShell() {
     button.setAttribute("aria-pressed", String(activeSound));
     button.querySelector(".sound-state").textContent = activeSound ? "On" : "Off";
     try {
-      window.localStorage.setItem("kershey-record-sound", activeSound ? "on" : "off");
+      window.localStorage.setItem(SOUND_STORAGE_KEY, activeSound ? "on" : "off");
     } catch {
       // Sound can still be toggled for this page.
     }
@@ -816,9 +978,7 @@ function bindShell() {
     if (!link || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
     event.preventDefault();
     const page = link.dataset.page;
-    const oldPage = currentPage();
     navigate(page);
-    if (oldPage !== page) playTick();
   });
 
   document.addEventListener("keydown", (event) => {
@@ -830,12 +990,6 @@ function bindShell() {
     button.setAttribute("aria-expanded", "false");
     button.focus();
   });
-}
-
-try {
-  activeSound = window.localStorage.getItem("kershey-record-sound") === "on";
-} catch {
-  activeSound = false;
 }
 
 mountShell();

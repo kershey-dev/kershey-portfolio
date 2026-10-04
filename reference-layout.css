@@ -28,6 +28,46 @@ body {
   box-shadow: none;
 }
 
+.sheet.is-arriving {
+  animation: newspaper-arrival 820ms cubic-bezier(0.4, 0, 0.2, 1) both;
+  transform-origin: 52% 46%;
+  backface-visibility: hidden;
+}
+
+.sheet.is-page-settling {
+  animation: newspaper-page-settle 250ms cubic-bezier(0.2, 0.7, 0.25, 1) both;
+  transform-origin: 52% 46%;
+}
+
+@keyframes newspaper-arrival {
+  0% {
+    transform: perspective(1500px) translate3d(0, 9px, 26px) rotateX(1.8deg) rotateY(-0.25deg) scale(0.986);
+  }
+  58% {
+    transform: perspective(1500px) translate3d(0, -1px, 7px) rotateX(-0.3deg) rotateY(0.08deg) scale(1.002);
+  }
+  100% {
+    transform: none;
+  }
+}
+
+@keyframes newspaper-page-settle {
+  0% {
+    transform: translateY(5px) scale(0.997);
+  }
+  100% {
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sheet.is-arriving,
+  .sheet.is-page-settling {
+    animation: none !important;
+    transform: none !important;
+  }
+}
+
 .paper-art {
   position: absolute;
   z-index: 0;
@@ -95,8 +135,8 @@ body {
 }
 
 .rail-name {
-  font: 700 24px/0.95 var(--serif);
-  letter-spacing: -0.04em;
+  font: 700 18px/1.08 var(--serif);
+  letter-spacing: -0.035em;
 }
 
 .rail-role {
@@ -328,7 +368,7 @@ body {
   align-self: center;
   padding: 1px 0 14px;
   border-bottom: 6px double var(--ink);
-  font-size: clamp(67px, 7.4vw, 118px);
+  font-size: clamp(59px, 6.5vw, 104px);
   letter-spacing: -0.04em;
 }
 
@@ -446,11 +486,66 @@ body {
   aspect-ratio: 1.16;
 }
 
+.lead-portrait .portrait-photo {
+  position: relative;
+  overflow: hidden;
+  background: #f4f2ee;
+}
+
+.lead-portrait .portrait-photo::before {
+  z-index: 1;
+  inset: 0;
+  border: 0;
+  background: rgb(225 217 204 / 23%);
+  mix-blend-mode: multiply;
+  transition: opacity 280ms ease;
+}
+
+.lead-portrait .portrait-photo::after {
+  z-index: 2;
+  inset: 0;
+  width: auto;
+  height: auto;
+  border: 0;
+  background: url("assets/textures/newsprint-fiber.svg") repeat;
+  background-size: 256px 256px;
+  opacity: 0.16;
+  mix-blend-mode: multiply;
+}
+
+.lead-portrait .portrait-image {
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 3%;
+  filter: grayscale(0.2) saturate(0.78) sepia(0.055) contrast(0.98);
+  transform: scale(1.64);
+  transform-origin: 50% 0;
+  transition: filter 320ms ease, transform 320ms ease;
+}
+
+.lead-portrait .portrait-photo:hover .portrait-image,
+.lead-portrait .portrait-photo:focus-within .portrait-image {
+  filter: none;
+  transform: scale(1.6);
+}
+
+.lead-portrait .portrait-photo:hover::before,
+.lead-portrait .portrait-photo:focus-within::before {
+  opacity: 0.12;
+}
+
 .lead-portrait .caption {
+  display: block;
+  padding-top: 7px;
   text-align: center;
-  text-transform: uppercase;
-  letter-spacing: 0.2em;
-  font-size: 12px;
+  text-transform: none;
+  letter-spacing: 0.035em;
+  font: 600 16px/1.2 var(--serif);
   font-style: normal;
 }
 
@@ -458,7 +553,7 @@ body {
   display: block;
   max-width: 32ch;
   margin: 6px auto 0;
-  font: italic 18px/1.15 var(--serif);
+  font: italic 17px/1.18 var(--serif);
   letter-spacing: 0;
   text-transform: none;
 }
@@ -856,7 +951,7 @@ body {
   }
 
   .rail-name {
-    font-size: 19px;
+    font-size: 18px;
   }
 
   .contents-nav a {
@@ -1035,7 +1130,7 @@ body {
 
   .sheet[data-page="index"] .masthead {
     grid-row: 3;
-    font-size: clamp(30px, 10vw, 52px);
+    font-size: clamp(27px, 8.8vw, 46px);
     line-height: 0.95;
     white-space: normal;
   }
