@@ -1,6 +1,7 @@
 @font-face {
   font-family: "Record Fraktur";
   src: url("assets/fonts/unifrakturcook.ttf") format("truetype");
+  font-weight: 700;
   font-display: swap;
 }
 
@@ -132,7 +133,7 @@ button:focus-visible,
   margin: 0 auto;
   border-right: 1px solid var(--ink);
   border-left: 1px solid var(--ink);
-  background: var(--paper);
+  background: transparent;
 }
 
 .rail {
@@ -290,7 +291,7 @@ button:focus-visible,
   padding: 0.15rem 0 0.23rem;
   border-top: 1px solid var(--ink);
   border-bottom: 5px double var(--ink);
-  font: 400 clamp(3.8rem, 7vw, 6rem)/0.92 "Record Fraktur", "Old English Text MT", Georgia, serif;
+  font: 400 clamp(3.8rem, 7vw, 6rem)/0.92 "Old English Text MT", "Record Fraktur", Georgia, serif;
   text-align: center;
   white-space: nowrap;
 }

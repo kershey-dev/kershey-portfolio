@@ -1,7 +1,7 @@
 /* Layout matched to the three supplied newspaper page references. */
 :root {
-  --paper: #f8f7f1;
-  --paper-shadow: #e7e5df;
+  --paper: #e7e0da;
+  --paper-shadow: #d5d3cd;
   --ink: #0c0c0c;
   --red: #a3131d;
   --rule: #85827c;
@@ -13,12 +13,67 @@ body {
 }
 
 .sheet {
-  grid-template-columns: 225px minmax(0, 1fr);
-  width: min(calc(100% - 68px), 1520px);
+  position: relative;
+  isolation: isolate;
+  grid-template-columns: minmax(180px, 14.1%) minmax(0, 1fr);
+  width: min(calc(100% - clamp(96px, 13.2vw, 210px)), 1520px);
   min-height: calc(100vh - 42px);
-  margin: 12px auto;
-  border: 2px solid var(--ink);
-  background: var(--paper);
+  /* Leave a steady reveal above the top edge of the paper stack. */
+  margin: clamp(64px, calc(5.15vw + 16px), 98px) auto 22px;
+  border: 0;
+  background-color: var(--paper);
+  background-image: url("assets/textures/newsprint-fiber.svg");
+  background-size: 512px 512px;
+  background-repeat: repeat;
+  box-shadow: none;
+}
+
+.paper-art {
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  pointer-events: none;
+}
+
+.paper-art span {
+  position: absolute;
+  display: block;
+  pointer-events: none;
+}
+
+.paper-art__sides {
+  /* The side crop begins exactly where the top cap ends and stops at the
+     front sheet's bottom edge; the bottom cap supplies the overhang. */
+  inset-block: 0;
+  inset-inline: clamp(-96px, -6vw, -42px);
+  background-image:
+    url("assets/images/newspaper-paper-left-edge-tile.png"),
+    url("assets/images/newspaper-paper-right-edge-tile.png");
+  background-position: left top, right top;
+  background-size: 8.22% auto, 8.22% auto;
+  background-repeat: repeat-y, repeat-y;
+}
+
+.paper-art__top,
+.paper-art__bottom {
+  inset-inline: clamp(-96px, -6vw, -42px);
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+}
+
+.paper-art__top {
+  top: 0;
+  transform: translateY(-100%);
+  aspect-ratio: 1582 / 82;
+  background-image: url("assets/images/newspaper-paper-top.png");
+}
+
+.paper-art__bottom {
+  /* The lower crop starts before the front sheet ends; overlap that blank
+     margin so its printed edge joins the side crops instead of forming a seam. */
+  top: calc(100% - clamp(8px, 2.22vw, 38px));
+  aspect-ratio: 1582 / 84;
+  background-image: url("assets/images/newspaper-paper-bottom.png");
 }
 
 /* Keep the front page content-sized so browser zoom can reflow it naturally. */
@@ -28,13 +83,15 @@ body {
 
 .sheet[data-page="index"] .rail {
   min-height: 0;
+  align-self: stretch;
 }
 
 .rail {
   min-height: calc(100vh - 46px);
-  padding: 34px 29px 24px;
+  padding: 34px 20px 24px 30px;
   border-right: 2px solid var(--ink);
   font-family: var(--serif);
+  z-index: 1;
 }
 
 .rail-name {
@@ -61,14 +118,15 @@ body {
 
 .contents-nav {
   gap: 8px;
+  margin-right: -8px;
 }
 
 .contents-nav a {
-  grid-template-columns: 35px 1fr;
-  gap: 10px;
+  grid-template-columns: 32px 1fr;
+  gap: 9px;
   padding: 8px 0;
   border: 0;
-  font: 18px/1.25 var(--serif);
+  font: 16px/1.25 var(--serif);
   letter-spacing: 0;
 }
 
@@ -168,16 +226,21 @@ body {
 }
 
 .paper {
-  padding: 0 25px 16px;
+  position: relative;
+  z-index: 1;
+  padding: 0 20px clamp(60px, 4vw, 68px);
+  background: transparent;
 }
 
 .publication-header {
+  position: relative;
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
   align-items: end;
   gap: 17px;
   min-height: 65px;
   border-bottom: 6px double var(--ink);
+  box-shadow: 0 3px 5px -4px rgba(57, 46, 29, 0.18);
 }
 
 .header-place,
@@ -201,7 +264,7 @@ body {
 .masthead {
   padding: 0 0 2px;
   border: 0;
-  font: 400 clamp(48px, 4.6vw, 72px)/0.9 "Record Fraktur", Georgia, serif;
+  font: 700 clamp(48px, 4.6vw, 72px)/0.9 "Old English Text MT", "Record Fraktur", Georgia, serif;
   letter-spacing: -0.02em;
 }
 
@@ -212,6 +275,10 @@ body {
   border-bottom: 2px solid var(--ink);
   font: 12px/1.2 var(--serif);
   letter-spacing: 0.28em;
+}
+
+.edition-line > span:first-child {
+  font-weight: 600;
 }
 
 .edition-line > span:last-child {
@@ -234,9 +301,19 @@ body {
 
 .sheet[data-page="index"] .publication-header {
   grid-template-columns: 1fr 1fr;
+  grid-template-rows: auto 6px auto;
   align-items: center;
-  min-height: 191px;
+  min-height: 175px;
   gap: 0;
+  border-bottom: 0;
+}
+
+.sheet[data-page="index"] .publication-header::before {
+  grid-row: 2;
+  grid-column: 1 / -1;
+  height: 6px;
+  border-top: 6px double var(--ink);
+  content: "";
 }
 
 .sheet[data-page="index"] .header-place,
@@ -246,11 +323,13 @@ body {
 }
 
 .sheet[data-page="index"] .masthead {
-  grid-row: 2;
+  grid-row: 3;
   grid-column: 1 / -1;
   align-self: center;
-  padding: 1px 0 5px;
-  font-size: clamp(67px, 8.1vw, 132px);
+  padding: 1px 0 14px;
+  border-bottom: 6px double var(--ink);
+  font-size: clamp(67px, 7.4vw, 118px);
+  letter-spacing: -0.04em;
 }
 
 .sheet[data-page="index"] .edition-line {
@@ -314,50 +393,57 @@ body {
 }
 
 .lead {
-  grid-template-columns: minmax(0, 1.8fr) minmax(0, 1fr);
-  gap: 32px;
-  padding: 28px 0 13px;
+  grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr);
+  gap: 28px;
+  padding: 18px 0 0;
   border-bottom: 3px solid var(--ink);
 }
 
 .lead-title {
   max-width: none;
   margin: 0;
-  font-size: clamp(72px, 7.1vw, 118px);
-  line-height: 0.78;
-  letter-spacing: -0.055em;
+  font-size: clamp(68px, 6.9vw, 110px);
+  line-height: 0.98;
+  letter-spacing: -0.045em;
+}
+
+@media (min-width: 1501px) {
+  .lead-title {
+    font-size: clamp(68px, 6.4vw, 106px);
+    line-height: 0.98;
+  }
 }
 
 .lead .deck {
   max-width: none;
   margin: 9px 0 0;
-  padding: 0 0 14px;
+  padding: 0 0 11px;
   border-top: 0;
   border-bottom: 1px solid var(--ink);
-  font-size: clamp(26px, 2.6vw, 42px);
+  font-size: clamp(26px, 2.5vw, 40px);
   line-height: 0.98;
   letter-spacing: -0.02em;
 }
 
 .text-columns {
-  gap: 24px;
-  padding-top: 16px;
-  font-size: 20px;
+  gap: 22px;
+  padding-top: 13px;
+  font-size: 18.5px;
   line-height: 1.12;
 }
 
 .text-columns p + p {
-  padding-left: 24px;
+  padding-left: 22px;
   border-left: 1px solid var(--rule);
 }
 
 .lead-portrait {
-  margin-top: -18px;
+  margin-top: -12px;
   padding-left: 15px;
 }
 
 .portrait-placeholder {
-  aspect-ratio: 1.08;
+  aspect-ratio: 1.16;
 }
 
 .lead-portrait .caption {
@@ -368,10 +454,25 @@ body {
   font-style: normal;
 }
 
+.lead-portrait .caption-note {
+  display: block;
+  max-width: 32ch;
+  margin: 6px auto 0;
+  font: italic 18px/1.15 var(--serif);
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+@media (max-width: 1300px) {
+  .lead-portrait .caption-note {
+    max-width: 23ch;
+  }
+}
+
 .front-briefs {
-  grid-template-columns: 1fr 1fr;
-  gap: 28px;
-  padding-top: 11px;
+  grid-template-columns: 0.96fr 1fr;
+  gap: 0;
+  padding-top: 9px;
 }
 
 .front-briefs article + article {
@@ -380,15 +481,19 @@ body {
 
 .front-briefs h2 {
   margin: 3px 0 7px;
-  font-size: clamp(37px, 3.3vw, 54px);
+  font-size: clamp(35px, 2.9vw, 47px);
   line-height: 0.82;
   letter-spacing: -0.04em;
 }
 
 .front-briefs p {
   max-width: 45ch;
-  font-size: 18px;
+  font-size: 17px;
   line-height: 1.1;
+}
+
+.front-briefs .story-link {
+  margin-top: 4px;
 }
 
 .work-top {
@@ -688,8 +793,7 @@ body {
 @media (max-width: 1300px) {
   .sheet {
     grid-template-columns: 195px minmax(0, 1fr);
-    width: min(calc(100% - 32px), 1700px);
-    margin-block: 12px;
+    grid-template-columns: minmax(165px, 14%) minmax(0, 1fr);
   }
 
   .rail {
@@ -809,15 +913,39 @@ body {
 @media (max-width: 720px) {
   html,
   body {
-    background: var(--paper);
+    background: var(--paper-shadow);
   }
 
   .sheet {
     display: block;
-    width: 100%;
+    width: calc(100% - 8px);
     min-height: 100vh;
-    margin: 0;
+    margin: calc(5.18vw + 12px) 4px 12px;
     border: 0;
+  }
+
+  .paper-art__sides {
+    inset-inline: -2px;
+    inset-block-start: 0;
+    inset-block-end: 0;
+  }
+
+  .paper-art__top {
+    top: 0;
+    inset-inline: -2px;
+  }
+
+  .paper-art__bottom {
+    top: calc(100% - clamp(8px, 2.22vw, 38px));
+    inset-inline: -2px;
+  }
+
+  .rail {
+    padding-inline: 28px;
+  }
+
+  .paper {
+    padding-inline: 28px;
   }
 
   .rail {
@@ -860,7 +988,7 @@ body {
 
   .paper {
     min-width: 0;
-    padding: 0 17px 26px;
+    padding: 0 17px clamp(42px, 11vw, 52px);
   }
 
   .page-content,
@@ -898,12 +1026,18 @@ body {
     display: none;
   }
 
-  .publication-header .masthead,
-  .sheet[data-page="index"] .masthead {
+  .publication-header .masthead {
     grid-row: 2;
     grid-column: 1 / -1;
     min-width: 0;
     font-size: clamp(30px, 7.5vw, 52px);
+  }
+
+  .sheet[data-page="index"] .masthead {
+    grid-row: 3;
+    font-size: clamp(30px, 10vw, 52px);
+    line-height: 0.95;
+    white-space: normal;
   }
 
   .edition-line,

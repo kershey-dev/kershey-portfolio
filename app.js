@@ -100,7 +100,7 @@ function indexPage() {
     "</div>" +
     "<figure class='lead-portrait'>" +
       imagePlaceholder("Portrait image to be added", "portrait-placeholder") +
-      "<figcaption class='caption'>Portrait placeholder</figcaption>" +
+      "<figcaption class='caption'><span>Portrait placeholder</span><span class='caption-note'>A continuing study in curiosity, craft, and better things on the web.</span></figcaption>" +
     "</figure>" +
   "</section>" +
   "<section class='front-briefs' aria-label='Inside this issue'>" +
@@ -332,6 +332,9 @@ function navigationMarkup() {
 function mountShell() {
   document.getElementById("app").innerHTML =
     "<div class='sheet'>" +
+      "<div class='paper-art' aria-hidden='true'>" +
+        "<span class='paper-art__sides'></span><span class='paper-art__top'></span><span class='paper-art__bottom'></span>" +
+      "</div>" +
       "<aside class='rail' aria-label='Portfolio contents'>" + navigationMarkup() + "</aside>" +
       "<main class='paper'>" +
         "<div class='publication-header'><span class='header-place'>Philippines <b>/</b> Portfolio</span>" +
