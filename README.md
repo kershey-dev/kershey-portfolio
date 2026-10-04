@@ -4,7 +4,9 @@ A newspaper-style portfolio for Kershey Tumbagahan, built as a responsive static
 
 ## Run locally
 
-From this directory, start a static file server with python3 -m http.server 8000, then open http://localhost:8000.
+From this directory, run `npm run dev`, then open http://localhost:8000. Stop the server with Ctrl+C.
+
+This is a plain static site, so the development command starts Python's built-in file server; it does not bundle or compile the files. Node.js/npm and Python must be available on your PATH.
 
 ## Pages
 
