@@ -1,6 +1,6 @@
 /* Layout matched to the three supplied newspaper page references. */
 :root {
-  --paper: #e7e0da;
+  --paper: #f2efe8;
   --paper-shadow: #d5d3cd;
   --ink: #0c0c0c;
   --red: #a3131d;
@@ -22,8 +22,10 @@ body {
   margin: clamp(64px, calc(5.15vw + 16px), 98px) auto 22px;
   border: 0;
   background-color: var(--paper);
-  background-image: url("assets/textures/newsprint-fiber.svg");
-  background-size: 512px 512px;
+  /* The front face needs the same newsprint grain as the transparent edge
+     artwork; a finer, low-contrast SVG made the sheet box read as a rectangle. */
+  background-image: url("assets/textures/newspaper-surface-tile.png");
+  background-size: 768px 768px;
   background-repeat: repeat;
   box-shadow: none;
 }
@@ -37,6 +39,24 @@ body {
 .sheet.is-page-settling {
   animation: newspaper-page-settle 250ms cubic-bezier(0.2, 0.7, 0.25, 1) both;
   transform-origin: 52% 46%;
+}
+
+.sheet.is-page-turning-forward,
+.sheet.is-page-turning-back {
+  animation-duration: 170ms;
+  animation-timing-function: cubic-bezier(0.2, 0.7, 0.25, 1);
+  animation-fill-mode: both;
+  backface-visibility: hidden;
+}
+
+.sheet.is-page-turning-forward {
+  animation-name: newspaper-page-turn-forward;
+  transform-origin: 50% 50%;
+}
+
+.sheet.is-page-turning-back {
+  animation-name: newspaper-page-turn-back;
+  transform-origin: 50% 50%;
 }
 
 @keyframes newspaper-arrival {
@@ -60,9 +80,29 @@ body {
   }
 }
 
+@keyframes newspaper-page-turn-forward {
+  0%, 100% {
+    transform: none;
+  }
+  48% {
+    transform: perspective(1600px) translate3d(3px, -4px, 0) rotateY(-0.7deg);
+  }
+}
+
+@keyframes newspaper-page-turn-back {
+  0%, 100% {
+    transform: none;
+  }
+  48% {
+    transform: perspective(1600px) translate3d(-3px, -4px, 0) rotateY(0.7deg);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .sheet.is-arriving,
-  .sheet.is-page-settling {
+  .sheet.is-page-settling,
+  .sheet.is-page-turning-forward,
+  .sheet.is-page-turning-back {
     animation: none !important;
     transform: none !important;
   }
@@ -95,6 +135,7 @@ body {
 }
 
 .paper-art__top,
+.paper-art__bottom-surface,
 .paper-art__bottom {
   inset-inline: clamp(-96px, -6vw, -42px);
   background-repeat: no-repeat;
@@ -109,16 +150,37 @@ body {
 }
 
 .paper-art__bottom {
-  /* The lower crop starts before the front sheet ends; overlap that blank
-     margin so its printed edge joins the side crops instead of forming a seam. */
-  top: calc(100% - clamp(8px, 2.22vw, 38px));
+  /* Keep the stack edge at the sheet's actual bottom, with only a small
+     overlap to join the side strips without painting a band over the page. */
+  top: calc(100% - 7px);
   aspect-ratio: 1582 / 84;
   background-image: url("assets/images/newspaper-paper-bottom.png");
+  /* Fade the asset into the front sheet so its straight source-image edge
+     cannot read as a horizontal seam. */
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 24px);
+  mask-image: linear-gradient(to bottom, transparent 0, #000 24px);
+}
+
+.paper-art__bottom-surface {
+  /* Carry the front-sheet grain beneath the bottom artwork's fade. */
+  z-index: 0;
+  inset-inline: 0;
+  top: calc(100% - 7px);
+  height: 24px;
+  background-image: url("assets/textures/newspaper-surface-tile.png");
+  background-size: 768px 768px;
+  background-repeat: repeat;
 }
 
 /* Keep the front page content-sized so browser zoom can reflow it naturally. */
 .sheet[data-page="index"] {
   min-height: 0;
+}
+
+/* Keep the portrait in the sheet's blend group so its light backdrop shares
+   the paper surface instead of painting as a separate card. */
+.sheet[data-page="index"] .paper {
+  z-index: auto;
 }
 
 .sheet[data-page="index"] .rail {
@@ -489,28 +551,12 @@ body {
 .lead-portrait .portrait-photo {
   position: relative;
   overflow: hidden;
-  background: #f4f2ee;
+  background: transparent;
 }
 
-.lead-portrait .portrait-photo::before {
-  z-index: 1;
-  inset: 0;
-  border: 0;
-  background: rgb(225 217 204 / 23%);
-  mix-blend-mode: multiply;
-  transition: opacity 280ms ease;
-}
-
+.lead-portrait .portrait-photo::before,
 .lead-portrait .portrait-photo::after {
-  z-index: 2;
-  inset: 0;
-  width: auto;
-  height: auto;
-  border: 0;
-  background: url("assets/textures/newsprint-fiber.svg") repeat;
-  background-size: 256px 256px;
-  opacity: 0.16;
-  mix-blend-mode: multiply;
+  display: none;
 }
 
 .lead-portrait .portrait-image {
@@ -522,7 +568,8 @@ body {
   height: 100%;
   object-fit: cover;
   object-position: center 3%;
-  filter: grayscale(0.2) saturate(0.78) sepia(0.055) contrast(0.98);
+  mix-blend-mode: multiply;
+  filter: grayscale(0.08) saturate(0.92) brightness(1.08) contrast(1.08);
   transform: scale(1.64);
   transform-origin: 50% 0;
   transition: filter 320ms ease, transform 320ms ease;
@@ -530,13 +577,8 @@ body {
 
 .lead-portrait .portrait-photo:hover .portrait-image,
 .lead-portrait .portrait-photo:focus-within .portrait-image {
-  filter: none;
+  filter: saturate(1.02) brightness(1.04) contrast(1.04);
   transform: scale(1.6);
-}
-
-.lead-portrait .portrait-photo:hover::before,
-.lead-portrait .portrait-photo:focus-within::before {
-  opacity: 0.12;
 }
 
 .lead-portrait .caption {
@@ -591,11 +633,58 @@ body {
   margin-top: 4px;
 }
 
+/* Keep the Index at reference scale on short desktop windows. Tighten only
+   empty spacing; typography and image proportions remain unchanged. */
+@media (min-width: 1500px) and (max-height: 1100px) {
+  .sheet[data-page="index"] {
+    margin-bottom: 10px;
+  }
+
+  .sheet[data-page="index"] .paper {
+    /* Leave a real print margin below the links without a large blank tail. */
+    padding-bottom: 20px;
+  }
+
+  .sheet[data-page="index"] .publication-header {
+    min-height: 165px;
+  }
+
+  .sheet[data-page="index"] .masthead {
+    font-size: clamp(59px, 6.5vw, 92px);
+    line-height: 0.9;
+  }
+
+  .sheet[data-page="index"] .lead {
+    padding-top: 12px;
+  }
+
+  .sheet[data-page="index"] .lead .deck {
+    margin-top: 6px;
+    padding-bottom: 8px;
+  }
+
+  .sheet[data-page="index"] .text-columns {
+    padding-top: 10px;
+  }
+
+  .sheet[data-page="index"] .front-briefs {
+    padding-top: 6px;
+  }
+}
+
+/* At 100% zoom on a wide but short desktop, fit the printed page itself to
+   the available canvas. Taller windows and browser zoom retain normal sizing. */
+@media (min-width: 1500px) and (max-height: 1000px) {
+  .sheet[data-page="index"] {
+    zoom: 0.9;
+  }
+}
+
 .work-top {
   display: grid;
   grid-template-columns: minmax(0, 1.9fr) minmax(0, 1.1fr);
-  gap: 28px;
-  padding: 14px 0 17px;
+  gap: 24px;
+  padding: 12px 0 14px;
   border-bottom: 3px solid var(--ink);
 }
 
@@ -627,8 +716,8 @@ body {
 
 .feature-copy {
   grid-template-columns: 1.25fr 0.95fr;
-  gap: 27px;
-  margin-top: 13px;
+  gap: 24px;
+  margin-top: 11px;
   font-size: 18px;
   line-height: 1.13;
 }
@@ -684,8 +773,8 @@ body {
 }
 
 .project-summary {
-  min-height: 104px;
-  margin-top: 13px;
+  min-height: 68px;
+  margin-top: 11px;
   font-size: 18px;
   line-height: 1.12;
 }
@@ -708,8 +797,8 @@ body {
 .work-bottom {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 28px;
-  padding-top: 11px;
+  gap: 24px;
+  padding-top: 9px;
 }
 
 .work-small-story + .work-small-story {
@@ -727,7 +816,7 @@ body {
 .small-story-body {
   display: grid;
   grid-template-columns: 1.05fr 0.95fr;
-  gap: 16px;
+  gap: 14px;
 }
 
 .small-story-body p {
@@ -747,6 +836,39 @@ body {
 
 .work-small-story .story-link {
   margin-top: 4px;
+}
+
+/* Give the wide Work masthead breathing room from the place and topic lines. */
+@media (min-width: 1101px) {
+  .sheet[data-page="work"] .masthead {
+    font-size: clamp(48px, 3.6vw, 62px);
+    white-space: nowrap;
+  }
+}
+
+/* The tablet header moves to two rows before its three columns get crowded. */
+@media (min-width: 721px) and (max-width: 1100px) {
+  .sheet[data-page="work"] .publication-header {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    min-height: 112px;
+  }
+
+  .sheet[data-page="work"] .header-place,
+  .sheet[data-page="work"] .header-topics {
+    padding-bottom: 7px;
+    font-size: 15px;
+  }
+
+  .sheet[data-page="work"] .header-topics {
+    gap: clamp(8px, 1.5vw, 16px);
+  }
+
+  .sheet[data-page="work"] .masthead {
+    grid-row: 2;
+    grid-column: 1 / -1;
+    font-size: clamp(40px, 5vw, 54px);
+    white-space: nowrap;
+  }
 }
 
 .about-kicker {
@@ -1005,6 +1127,42 @@ body {
   }
 }
 
+@media (min-width: 721px) and (max-width: 900px) {
+  .sheet[data-page="index"] .edition-line {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 8px;
+    letter-spacing: 0.1em;
+  }
+
+  .sheet[data-page="index"] .edition-line > span:first-child {
+    max-width: none;
+    font-size: 10px;
+    letter-spacing: 0.08em;
+  }
+
+  .sheet[data-page="index"] .edition-line > span:last-child {
+    gap: 8px;
+    font-size: 10px;
+    letter-spacing: 0.06em;
+  }
+
+  .sheet[data-page="index"] .lead {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 16px;
+  }
+
+  .sheet[data-page="index"] .lead-title {
+    font-size: clamp(58px, 7.5vw, 76px);
+  }
+
+  .sheet[data-page="index"] .lead-portrait {
+    width: min(100%, 460px);
+    margin: 0 auto;
+    padding-left: 0;
+  }
+}
+
 @media (max-width: 720px) {
   html,
   body {
@@ -1031,8 +1189,12 @@ body {
   }
 
   .paper-art__bottom {
-    top: calc(100% - clamp(8px, 2.22vw, 38px));
+    top: calc(100% - 4px);
     inset-inline: -2px;
+  }
+
+  .paper-art__bottom-surface {
+    top: calc(100% - 4px);
   }
 
   .rail {

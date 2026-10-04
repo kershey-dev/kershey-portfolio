@@ -337,7 +337,7 @@ function mountShell() {
   document.getElementById("app").innerHTML =
     "<div class='sheet'>" +
       "<div class='paper-art' aria-hidden='true'>" +
-        "<span class='paper-art__sides'></span><span class='paper-art__top'></span><span class='paper-art__bottom'></span>" +
+        "<span class='paper-art__sides'></span><span class='paper-art__top'></span><span class='paper-art__bottom-surface'></span><span class='paper-art__bottom'></span>" +
       "</div>" +
       "<aside class='rail' aria-label='Portfolio contents'>" + navigationMarkup() + "</aside>" +
       "<main class='paper'>" +
@@ -357,7 +357,7 @@ function animatePaper(className) {
   if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
   const sheet = document.querySelector(".sheet");
   if (!sheet) return;
-  sheet.classList.remove("is-arriving", "is-page-settling");
+  sheet.classList.remove("is-arriving", "is-page-settling", "is-page-turning-forward", "is-page-turning-back");
   void sheet.offsetWidth;
   sheet.classList.add(className);
   sheet.addEventListener("animationend", () => sheet.classList.remove(className), { once: true });
@@ -416,7 +416,7 @@ function playIntroIfNeeded() {
 
 let lastRenderedPage = null;
 
-function renderPage() {
+function renderPage(options = {}) {
   const page = currentPage();
   const pageChanged = lastRenderedPage !== null && lastRenderedPage !== page;
   if (page !== "puzzle" && puzzleAbortController) puzzleAbortController.abort();
@@ -443,21 +443,23 @@ function renderPage() {
   if (lastRenderedPage === null) playIntroIfNeeded();
   else if (pageChanged) {
     animatePaper("is-page-settling");
-    playTick("page");
+    if (options.playPageSound !== false) playTick("page");
   }
   lastRenderedPage = page;
 }
 
-function navigate(page) {
+function navigate(page, options = {}) {
   if (!PAGE_RENDERERS[page]) return;
+  if (!options.fromWheel) cancelPendingPageTurn();
   const target = page === "index" ? window.location.pathname : "?page=" + encodeURIComponent(page);
   const existingPage = (new URL(window.location.href)).searchParams.get("page") || "index";
   if (existingPage !== page) {
     window.history.pushState({ page }, "", target);
   }
-  renderPage();
-  const behavior = window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth";
-  window.scrollTo({ top: 0, behavior });
+  renderPage({ playPageSound: options.playPageSound });
+  // The paper motion handles the transition; a smooth scroll here can fight
+  // the next wheel gesture and make it feel like upward scrolling is stuck.
+  window.scrollTo({ top: 0, behavior: "instant" });
 }
 
 function deterministicRandom(seed) {
@@ -531,11 +533,40 @@ let audioUnlocked = false;
 let puzzleAbortController = null;
 let lastHoverSoundAt = 0;
 let wheelGestureActive = false;
-let wheelGestureCanTurnPage = false;
+let wheelGestureEdge = null;
+let wheelGestureDirection = 0;
 let wheelGestureTurnedPage = false;
 let wheelGestureTimer = 0;
+let pendingPageTurnTimer = 0;
+let pendingPageTurnDirection = 0;
 
-function unlockAudio() {
+function cancelPendingPageTurn() {
+  if (pendingPageTurnTimer) window.clearTimeout(pendingPageTurnTimer);
+  pendingPageTurnTimer = 0;
+  pendingPageTurnDirection = 0;
+  document.querySelector(".sheet")?.classList.remove("is-page-turning-forward", "is-page-turning-back");
+}
+
+function beginWheelPageTurn(page, direction) {
+  if (pendingPageTurnTimer) return;
+  const sheet = document.querySelector(".sheet");
+  if (!sheet) return;
+
+  wheelGestureTurnedPage = true;
+  pendingPageTurnDirection = direction;
+  const turnClass = direction > 0 ? "is-page-turning-forward" : "is-page-turning-back";
+  sheet.classList.add(turnClass);
+  // Play while the boundary wheel input is still the active user gesture.
+  playTick("page");
+  pendingPageTurnTimer = window.setTimeout(() => {
+    pendingPageTurnTimer = 0;
+    pendingPageTurnDirection = 0;
+    sheet.classList.remove("is-page-turning-forward", "is-page-turning-back");
+    navigate(page, { fromWheel: true, playPageSound: false });
+  }, 170);
+}
+
+function unlockAudio(force = false) {
   if (!activeSound) return Promise.resolve(false);
   try {
     const AudioContextClass = window.AudioContext || window.webkitAudioContext;
@@ -545,17 +576,27 @@ function unlockAudio() {
       audioUnlocked = true;
       return Promise.resolve(true);
     }
-    if (!audioUnlockPromise) {
-      audioUnlockPromise = audioContext.resume()
-        .then(() => {
-          audioUnlocked = audioContext.state === "running";
-          return audioUnlocked;
-        })
-        .catch(() => false)
-        .finally(() => {
-          audioUnlockPromise = null;
-        });
-    }
+    if (audioUnlockPromise && !force) return audioUnlockPromise;
+
+    // A rejected or indefinitely pending resume from a wheel event must not
+    // prevent a later click or key press from unlocking audio.
+    let timeoutId = 0;
+    let unlockAttempt;
+    const resumeAttempt = audioContext.resume()
+      .then(() => {
+        audioUnlocked = audioContext.state === "running";
+        return audioUnlocked;
+      })
+      .catch(() => false);
+    const timeout = new Promise((resolve) => {
+      timeoutId = window.setTimeout(() => resolve(false), 180);
+    });
+    unlockAttempt = Promise.race([resumeAttempt, timeout])
+      .finally(() => {
+        window.clearTimeout(timeoutId);
+        if (audioUnlockPromise === unlockAttempt) audioUnlockPromise = null;
+      });
+    audioUnlockPromise = unlockAttempt;
     return audioUnlockPromise;
   } catch {
     // Browsers without an available audio context can still use the page.
@@ -911,34 +952,62 @@ async function loadContributions() {
 }
 
 function bindShell() {
+  const atPageTop = () => window.scrollY <= 2;
   const atPageBottom = () => window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - 3;
 
   window.addEventListener("wheel", (event) => {
     if (window.matchMedia("(max-width: 720px)").matches) return;
+    if (event.ctrlKey || event.deltaY === 0) return;
+
+    const direction = Math.sign(event.deltaY);
+    if (pendingPageTurnTimer) {
+      if (direction === pendingPageTurnDirection) {
+        event.preventDefault();
+        return;
+      }
+      // Let an opposite-direction gesture cancel the pending turn and scroll
+      // back through the current page as the reader expects.
+      cancelPendingPageTurn();
+      wheelGestureActive = false;
+      wheelGestureTurnedPage = false;
+    }
+
+    // A direction reversal after a completed turn is a fresh reading intent;
+    // same-direction momentum stays locked so one flick cannot skip pages.
+    if (wheelGestureActive && wheelGestureTurnedPage && direction !== wheelGestureDirection) {
+      wheelGestureActive = false;
+      wheelGestureTurnedPage = false;
+      wheelGestureEdge = null;
+    }
 
     if (!wheelGestureActive) {
       wheelGestureActive = true;
-      wheelGestureCanTurnPage = atPageBottom();
+      wheelGestureDirection = direction;
+      wheelGestureEdge = direction > 0
+        ? (atPageBottom() ? "bottom" : null)
+        : (atPageTop() ? "top" : null);
       wheelGestureTurnedPage = false;
     }
 
     window.clearTimeout(wheelGestureTimer);
     wheelGestureTimer = window.setTimeout(() => {
       wheelGestureActive = false;
-      wheelGestureCanTurnPage = false;
+      wheelGestureEdge = null;
+      wheelGestureDirection = 0;
       wheelGestureTurnedPage = false;
-    }, 460);
+    }, 650);
 
-    if (event.deltaY <= 0 || event.ctrlKey || !wheelGestureCanTurnPage || wheelGestureTurnedPage) return;
-    const nextPage = READING_ORDER[READING_ORDER.indexOf(currentPage()) + 1];
-    if (!nextPage) return;
+    if (direction !== wheelGestureDirection || !wheelGestureEdge || wheelGestureTurnedPage) return;
+    const pageIndex = READING_ORDER.indexOf(currentPage());
+    const targetIndex = pageIndex + (wheelGestureEdge === "bottom" ? 1 : -1);
+    const targetPage = READING_ORDER[targetIndex];
+    if (!targetPage) return;
     event.preventDefault();
-    wheelGestureTurnedPage = true;
-    navigate(nextPage);
+    beginWheelPageTurn(targetPage, direction);
   }, { passive: false });
 
-  ["pointerdown", "keydown", "click", "wheel", "touchstart"].forEach((type) => {
-    document.addEventListener(type, unlockAudio, { passive: type === "wheel" || type === "touchstart" });
+  ["pointerdown", "keydown", "touchend"].forEach((type) => {
+    document.addEventListener(type, () => unlockAudio(true), { passive: type === "touchend" });
   });
 
   document.getElementById("app").addEventListener("pointerover", (event) => {
